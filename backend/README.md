@@ -1,0 +1,1 @@
+Run the server with `fastapi dev main.py`
