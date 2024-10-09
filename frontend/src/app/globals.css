@@ -40,3 +40,7 @@ a {
     color-scheme: dark;
   }
 }
+.map-container {
+  width: 100%;
+  height: 400px; /* Set a height for the map */
+}
