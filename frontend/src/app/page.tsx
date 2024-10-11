@@ -1,14 +1,18 @@
 import Image from "next/image";
 import styles from "./page.module.css";
 import GoogleMapComponent from "./components/map";
+import SearchBar from "./components/search";
 
 export default function Home() {
   return (
     <div className={styles.page}>
       <main className={styles.main}>
         <h1>HOMEBASE</h1>
-
-        <GoogleMapComponent/>
+        <div> 
+          <SearchBar/>
+          <GoogleMapComponent/>
+        </div>
+        
 
         <div className={styles.ctas}>
           <a
