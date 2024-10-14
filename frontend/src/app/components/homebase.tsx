@@ -3,15 +3,15 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
-const Homebase: React.FC = () => {
+const Homebase = () => {
  
-    const HomebaseInput:  React.FC = () => {
+    const HomebaseInput = () => {
         return (
             <Input className='homebase-input'/>
         );
     };
 
-    const EditButton: React.FC = () => {
+    const EditButton = () => {
         return (
             <Button className = "edit-button" type="submit">
                 <i className="fas fa-edit"></i>
