@@ -180,6 +180,8 @@ li {
 }
 .homebase{
   display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .homebase-section{
   display: flex;
@@ -188,10 +190,6 @@ li {
   padding: 5px;
   background-color: #fff;
   border: 1px solid #625d5d27
-}
-.homebase h1{
-  padding-right: 20px;
-  font-weight: bold;
 }
 /* Map section */
 .map {
@@ -211,11 +209,18 @@ li {
   padding: 20px;
   border-radius: 8px;
 }
+/* Activity Selector  */
 .activity-selector{
   background-color: #fff;
   cursor: pointer;
   border-radius: 5px;
   padding: 10px;
+}
+.activity-selector-header{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  justify-items: center;
 }
 
 .schedule h3 {

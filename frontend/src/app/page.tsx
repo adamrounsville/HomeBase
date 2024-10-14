@@ -16,20 +16,16 @@ export default function Home() {
           <div className="container">
 
             <header className="header">
-              <div className="homebase">
-                <h1>Homebase:</h1>
-                <Homebase/>
-              </div>
+              <Homebase/>
               <SearchBar/>
             </header>
           
             <aside className="sidebar">
-              <h2>Activities</h2>
               <ActivitySelector/>
             </aside>
 
             <section className="map">
-              <GoogleMapComponent/>
+              {/* <GoogleMapComponent/> */}
             </section>
 
             <section className="schedule">

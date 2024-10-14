@@ -44,6 +44,8 @@ const Homebase = () => {
                 value={homebaseAddress}
                 readOnly 
             />
+
+
         );
     };
 
@@ -61,6 +63,7 @@ const Homebase = () => {
 
     return(
         <div className='homebase-section'>
+            <h2>Homebase:</h2>
             <HomebaseInput/>
             <EditButton/>
             <HomeBaseLocationModal 
