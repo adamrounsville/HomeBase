@@ -180,6 +180,8 @@ li {
 }
 .homebase{
   display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .homebase-section{
   display: flex;
@@ -189,9 +191,9 @@ li {
   background-color: #fff;
   border: 1px solid #625d5d27
 }
-.homebase h1{
-  padding-right: 20px;
-  font-weight: bold;
+.homebase-title{
+  margin-right: 10px;
+  font-size: 22px;
 }
 /* Map section */
 .map {
@@ -211,11 +213,61 @@ li {
   padding: 20px;
   border-radius: 8px;
 }
+/* Activity Selector  */
 .activity-selector{
   background-color: #fff;
   cursor: pointer;
   border-radius: 5px;
   padding: 10px;
+}
+.activity-selector-header{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  justify-items: center;
+}
+.activity-title{
+  font-size: 22px;
+}
+.activity-list {
+  margin-top: 20px;
+}
+
+.activity-group {
+  margin-bottom: 10px;
+}
+
+.group-header {
+  font-weight: bold;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  display: flex;
+  justify-content: space-between;
+  border-radius: 8px;
+  align-items: center;
+  cursor: pointer;
+  padding: 10px 0;
+}
+
+.group-content {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-top: none;
+}
+
+.group-options {
+  margin-right: 15px; 
+  cursor: pointer;   
+  margin-left: 10px;
+}
+.group-title {
+  flex: 1; 
+  margin-left: 10px;
+  white-space: normal; 
+  word-wrap: break-word;
+  overflow: hidden; 
+  text-overflow: ellipsis; 
+  max-width: 100%; 
 }
 
 .schedule h3 {
@@ -226,7 +278,6 @@ li {
   list-style-type: disc;
   margin-left: 20px;
 }
-
 
 /* Homebase Modal */
 .overlay {
