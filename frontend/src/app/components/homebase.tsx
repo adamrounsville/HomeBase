@@ -63,7 +63,7 @@ const Homebase = () => {
 
     return(
         <div className='homebase-section'>
-            <h2>Homebase:</h2>
+            <h2 className='homebase-title'>Homebase:</h2>
             <HomebaseInput/>
             <EditButton/>
             <HomeBaseLocationModal 

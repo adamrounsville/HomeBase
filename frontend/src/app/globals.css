@@ -191,6 +191,10 @@ li {
   background-color: #fff;
   border: 1px solid #625d5d27
 }
+.homebase-title{
+  margin-right: 10px;
+  font-size: 22px;
+}
 /* Map section */
 .map {
   grid-area: map;
@@ -222,6 +226,49 @@ li {
   align-items: center;
   justify-items: center;
 }
+.activity-title{
+  font-size: 22px;
+}
+.activity-list {
+  margin-top: 20px;
+}
+
+.activity-group {
+  margin-bottom: 10px;
+}
+
+.group-header {
+  font-weight: bold;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  display: flex;
+  justify-content: space-between;
+  border-radius: 8px;
+  align-items: center;
+  cursor: pointer;
+  padding: 10px 0;
+}
+
+.group-content {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-top: none;
+}
+
+.group-options {
+  margin-right: 15px; 
+  cursor: pointer;   
+  margin-left: 10px;
+}
+.group-title {
+  flex: 1; 
+  margin-left: 10px;
+  white-space: normal; 
+  word-wrap: break-word;
+  overflow: hidden; 
+  text-overflow: ellipsis; 
+  max-width: 100%; 
+}
 
 .schedule h3 {
   margin-bottom: 10px;
@@ -231,7 +278,6 @@ li {
   list-style-type: disc;
   margin-left: 20px;
 }
-
 
 /* Homebase Modal */
 .overlay {
