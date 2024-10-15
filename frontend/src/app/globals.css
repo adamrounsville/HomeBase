@@ -22,6 +22,7 @@ a {
 .map-container {
   width: 95%;
   height: 400px; /* TODO: Change this  */
+  z-index: 0;
 }
 @layer base {
   :root {
@@ -225,6 +226,60 @@ li {
   list-style-type: disc;
   margin-left: 20px;
 }
+
+
+/* Homebase Modal */
+.overlay {
+  position: fixed;
+  z-index: 1000;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 300px;
+  text-align: center;
+}
+
+.input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  margin-top: 10px;
+  border-radius: 4px;
+}
+
+.buttons {
+  display: flex;
+  justify-content: space-between;
+}
+
+.button {
+  padding: 10px 20px;
+  border-radius: 4px;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+
+.save-button {
+  background-color: #007bff;
+}
+
+.close-button {
+  background-color: #dc3545;
+}
+
+
 @layer base {
   * {
     @apply border-border;
