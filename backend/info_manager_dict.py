@@ -9,7 +9,7 @@ class Place:
 
 @dataclasses.dataclass
 class UserInfo:
-    home: str
+    home: tuple[float, float]
     places: list[Place]
 
 class InfoManagerDict:
@@ -17,10 +17,10 @@ class InfoManagerDict:
     def __init__(self):
         self.data = dict()
 
-    def add_user(self, location):
+    def add_user(self, latitude, longitude):
         user_id = str(len(self.data))
         info: UserInfo
-        info.home = location
+        info.home = (latitude, longitude)
         self.data[user_id] = info
         return user_id
     
