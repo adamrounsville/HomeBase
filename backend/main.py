@@ -1,7 +1,9 @@
-from typing import Union
-
-from fastapi import FastAPI
+from typing import Union, Annotated
+import os
+from dotenv import load_dotenv
+from fastapi import FastAPI, Body
 from pydantic import BaseModel
+import googlemaps
 
 from info_manager_dict import InfoManagerDict
 
@@ -19,7 +21,11 @@ class Route(BaseModel):
     # TODO
     pass
 
+load_dotenv()
+
 data = InfoManagerDict()
+
+gmaps = googlemaps.Client(key=os.getenv("GOOGLE_API_KEY"))
 
 app = FastAPI()
 
@@ -51,9 +57,16 @@ def get_route():
 
 
 @app.get("/homebase")
-def get_homebase():
+async def get_homebase(address: Annotated[str, Body()]):
     """
-        Takes in a address from the frontend, sets the information for use in the backend? or
-        send info for focusing the map in the frontend
+        Takes in a address from the frontend, sets the information for use in the backend
+        Returns the UUID.
     """
-    pass
+    geocode_result = gmaps.geocode(address)
+
+    lat = geocode_result[0]['geometry']['location']['lat']
+    lng = geocode_result[0]['geometry']['location']['lng']
+
+    uuid = data.add_user(lat, lng)
+
+    return { "uuid": uuid }
