@@ -1,5 +1,6 @@
 import dataclasses
 
+@dataclasses.dataclass
 class Place:
     name: str
     ID: str
