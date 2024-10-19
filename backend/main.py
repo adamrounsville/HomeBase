@@ -3,6 +3,8 @@ from typing import Union
 from fastapi import FastAPI
 from pydantic import BaseModel
 
+from info_manager_dict import InfoManagerDict
+
 class Place(BaseModel):
     name: str
     ID: str
@@ -17,12 +19,13 @@ class Route(BaseModel):
     # TODO
     pass
 
+data = InfoManagerDict()
 
 app = FastAPI()
 
 
 @app.get("/place/add")
-def get_place():
+def add_place():
     """
         Takes in a location name from the frontend, returns a Place made with information from
         Google API
