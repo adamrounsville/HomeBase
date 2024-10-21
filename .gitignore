@@ -40,6 +40,7 @@
 # virtual environment
 /backend/.venv
 /backend/.venv/pyvenv.cfg
+/backend/.env
 
 .DS_Store
 
