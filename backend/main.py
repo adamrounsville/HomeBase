@@ -25,10 +25,9 @@ load_dotenv()
 
 data = InfoManagerDict()
 
-gmaps = googlemaps.Client(key=os.getenv("GOOGLE_API_KEY"))
+gmaps = googlemaps.Client(key=os.getenv("GOOGLE_MAPS_API_KEY"))
 
 app = FastAPI()
-
 
 @app.get("/place/add")
 def add_place():
