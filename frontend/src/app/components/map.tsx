@@ -1,14 +1,13 @@
 "use client";
 import { useMemo } from "react";
 import { GoogleMap, useLoadScript, Marker } from "@react-google-maps/api";
+import { useGoogleMapsLoader } from "./useGoogleMapsLoader";
 
 const GoogleMapComponent = () => {
- const { isLoaded } = useLoadScript({
-   googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? 'default_api_key',
- });
-
- if (!isLoaded) return <div>Loading...</div>;
- return <Map />;
+  const { googleMaps, isLoaded, loadError } = useGoogleMapsLoader();
+  
+  if (!isLoaded) return <div>Loading...</div>;
+  return <Map />;
 }
 
 function Map() {

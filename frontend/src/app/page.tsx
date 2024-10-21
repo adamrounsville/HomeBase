@@ -25,7 +25,7 @@ export default function Home() {
             </aside>
 
             <section className="map">
-              {/* <GoogleMapComponent/> */}
+              <GoogleMapComponent/>
             </section>
 
             <section className="schedule">
