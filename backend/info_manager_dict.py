@@ -1,4 +1,5 @@
 import dataclasses
+import uuid
 
 @dataclasses.dataclass
 class Place:
@@ -13,14 +14,12 @@ class UserInfo:
     places: list[Place]
 
 class InfoManagerDict:
-
     def __init__(self):
         self.data = dict()
 
     def add_user(self, latitude, longitude):
-        user_id = str(len(self.data))
-        info: UserInfo
-        info.home = (latitude, longitude)
+        user_id = uuid.uuid4()
+        info = UserInfo(home=(latitude, longitude), places=[])
         self.data[user_id] = info
         return user_id
     
