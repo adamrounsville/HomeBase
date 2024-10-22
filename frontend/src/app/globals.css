@@ -330,6 +330,37 @@ li {
   background-color: #dc3545;
 }
 
+.info-window {
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 10px;
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.2);
+  width: 200px;
+  position: absolute;
+  z-index: 1000;
+}
+
+.info-window p {
+  margin: 0;
+  font-weight: bold;
+}
+
+.info-window button {
+  margin-top: 10px;
+  padding: 5px 10px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.info-window button:hover {
+  background-color: #45a049;
+}
+
+
 
 @layer base {
   * {
