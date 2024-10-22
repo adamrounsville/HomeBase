@@ -81,7 +81,7 @@ def get_route():
     pass
 
 @app.post("/homebase")
-async def set_homebase(address: Annotated[str, Body()]):
+def set_homebase(address: Annotated[str, Body()]):
     """
     Takes in a address from the frontend, sets the information for use in the backend, and 
     returns the UUID associated with the user.
