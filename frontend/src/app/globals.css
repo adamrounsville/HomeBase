@@ -382,6 +382,14 @@ li {
   transition: background-color 0.2s ease;
 }
 
+.overlay.show {
+  display: flex; /* Show modal when isOpen is true */
+}
+
+.overlay.hide {
+  display: none; /* Hide modal when isOpen is false */
+}
+
 
 @layer base {
   * {

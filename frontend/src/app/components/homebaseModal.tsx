@@ -44,12 +44,11 @@ const HomeBaseLocationModal: React.FC<ModalProps> = ({ isOpen, onClose, onSave, 
       onPlaceSelect(placeAutocomplete.getPlace());
       });
   }, [onPlaceSelect, placeAutocomplete]);
-
-  if (!isOpen) return;
+  
   
 
   return (
-    <div className="overlay">
+    <div className={`overlay ${isOpen ? 'show' : 'hide'}`}>
       <div className="modal">
         <h2>Enter Address</h2>
         <Input  
