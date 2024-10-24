@@ -1,14 +1,18 @@
 "use client"
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import HomeBaseLocationModal from './homebaseModal';
 
+interface Props {
+    onPlaceSelect: (place: google.maps.places.PlaceResult | null) => void;
+  }
 
-const Homebase = () => {
+const Homebase = ({onPlaceSelect}: Props) => {
     const [homebaseAddress, setHomebaseAddress] = useState<string>("")
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+
 
     useEffect(() => {
         const homebaseLocation = localStorage.getItem('homebaseLocation');
@@ -70,6 +74,8 @@ const Homebase = () => {
                 isOpen={isModalOpen} 
                 onClose={closeModal} 
                 onSave={handleSave}
+                onPlaceSelect={onPlaceSelect}
+                
             />
         </div>
         

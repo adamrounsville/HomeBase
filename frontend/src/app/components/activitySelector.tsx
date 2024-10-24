@@ -23,9 +23,9 @@ import { useState } from "react";
   const ActivitySelector = () => {
 
     const [activityGroups, setActivityGroups] = useState([
-        { id: 'group-1', title: 'Snorkelling', content: 'INFO HERE' },
-        { id: 'group-2', title: 'Sandy Beaches', content: 'INFO HERE' },
-        { id: 'group-3', title: 'Restaurants', content: 'INFO HERE' },
+        { id: 'group-1', title: 'Snorkelling', activities: ['Explore coral reefs', 'Underwater photography', 'Fish watching', "Wakiki Beach", "Turtle Beach"] },
+        { id: 'group-2', title: 'Sandy Beaches', activities: ['Sunbathing', 'Volleyball', 'Building sandcastles'], },
+        { id: 'group-3', title: 'Restaurants', activities: ['Local seafood', 'Fine dining', 'Street food'],},
       ]);
 
       const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -47,11 +47,10 @@ import { useState } from "react";
           const newItem = {
             id: `group-${activityGroups.length + 1}`,
             title: newActivityTitle,
-            content: 'INFO HERE', 
+            activities: [], 
           };
           setActivityGroups([...activityGroups, newItem]);
           setNewActivityTitle(''); 
-
           setIsDialogOpen(false);
         }
       };
@@ -96,7 +95,13 @@ import { useState } from "react";
                     </div>
                     {openGroup === group.id && (
                         <div className="group-content">
-                            {group.content}
+                            <div className="activity-items-container">
+                              {group.activities!.map((activity, index) => (
+                                <div key={index} className="activity-item">
+                                  {activity}
+                                </div>
+                              ))}
+                            </div>
                         </div>
                     )}
                 </div>

@@ -23,7 +23,7 @@ export default function Home() {
             <div className="container">
 
               <header className="header">
-                <Homebase/>
+                <Homebase onPlaceSelect={setSelectedPlace}/>
                 <SearchBar onPlaceSelect={setSelectedPlace}/>
               </header>
             
