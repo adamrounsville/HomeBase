@@ -7,10 +7,16 @@ import ActivitySelector from "./components/activitySelector";
 import Homebase from "./components/homebase";
 import { useState } from "react";
 import { APIProvider } from "@vis.gl/react-google-maps";
+import { ActivityGroup } from "@/lib/utils";
 
 export default function Home() {
 
   const [selectedPlace, setSelectedPlace] = useState<google.maps.places.PlaceResult | null>(null);
+  const [activityGroups, setActivityGroups] = useState([
+    new ActivityGroup("group-id-1", "Snorkelling", []),
+    new ActivityGroup("group-id-2", "Beaches", []),
+    new ActivityGroup("group-id-3", "Resturants", []),
+  ]);
   
   return (
     <div>
@@ -28,11 +34,11 @@ export default function Home() {
               </header>
             
               <aside className="sidebar">
-                <ActivitySelector/>
+                <ActivitySelector activityGroups={activityGroups} setActivityGroups={setActivityGroups}/>
               </aside>
 
               <section className="map">
-                <GoogleMapComponent selectedPlace={selectedPlace}/>
+                <GoogleMapComponent selectedPlace={selectedPlace} activityGroups={activityGroups} setActivityGroups={setActivityGroups}/>
               </section>
 
               <section className="schedule">

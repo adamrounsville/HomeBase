@@ -18,15 +18,15 @@ import { Button } from "@/components/ui/button";
   } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
-  
+import { ActivityGroup, Place } from "@/lib/utils";
+import { Props } from "next/script";
+  interface props {
+    activityGroups: ActivityGroup[]
+    setActivityGroups: (activityGroups: ActivityGroup[]) => void;
+  }
 
-  const ActivitySelector = () => {
+  const ActivitySelector = ({activityGroups, setActivityGroups}: props) => {
 
-    const [activityGroups, setActivityGroups] = useState([
-        { id: 'group-1', title: 'Snorkelling', activities: ['Explore coral reefs', 'Underwater photography', 'Fish watching', "Wakiki Beach", "Turtle Beach"] },
-        { id: 'group-2', title: 'Sandy Beaches', activities: ['Sunbathing', 'Volleyball', 'Building sandcastles'], },
-        { id: 'group-3', title: 'Restaurants', activities: ['Local seafood', 'Fine dining', 'Street food'],},
-      ]);
 
       const [isDialogOpen, setIsDialogOpen] = useState(false);
     
@@ -44,11 +44,11 @@ import { useState } from "react";
       // Function to handle adding new activity group
       const handleAddActivity = () => {
         if (newActivityTitle.trim()) {
-          const newItem = {
-            id: `group-${activityGroups.length + 1}`,
-            title: newActivityTitle,
-            activities: [], 
-          };
+          const newItem = new ActivityGroup(
+            `group-${activityGroups.length + 1}`,
+            newActivityTitle,
+            []
+          );
           setActivityGroups([...activityGroups, newItem]);
           setNewActivityTitle(''); 
           setIsDialogOpen(false);
@@ -98,7 +98,7 @@ import { useState } from "react";
                             <div className="activity-items-container">
                               {group.activities!.map((activity, index) => (
                                 <div key={index} className="activity-item">
-                                  {activity}
+                                  {activity.Name}
                                 </div>
                               ))}
                             </div>

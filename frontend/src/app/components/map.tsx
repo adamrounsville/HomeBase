@@ -4,10 +4,16 @@ import MapHandler from "./map-Handler";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { getData } from "./data";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ActivityGroup, Place } from "@/lib/utils";
 interface Props {
-  selectedPlace: google.maps.places.PlaceResult | null
+  selectedPlace: google.maps.places.PlaceResult | null;
+  activityGroups: ActivityGroup[];
+  setActivityGroups: (activityGroups: ActivityGroup[]) => void;
 }
 
+// This is to load in marker Fake Data
 const data = getData()
   .sort((a, b) => b.position.lat - a.position.lat)
   .map((dataItem, index) => ({...dataItem, zIndex: index}));
@@ -15,7 +21,8 @@ const data = getData()
 const Z_INDEX_SELECTED = data.length;
 const Z_INDEX_HOVER = data.length + 1;
 
-const GoogleMapComponent = ({selectedPlace}: Props) => {
+const GoogleMapComponent = ({selectedPlace, activityGroups, setActivityGroups}: Props) => {
+
   // Markers contains the array and information pertaining to the "fake data" markers
   const [markers] = useState(data);
 
@@ -34,6 +41,11 @@ const GoogleMapComponent = ({selectedPlace}: Props) => {
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const placeMarkers = true;
+
+  // For the AddToActivityGroup Modal, sets if its open and which activity group is selected
+  // for the select
+  const [isModalOpen, setModalOpen] = useState(false); // Modal state
+  const [selectedActivityGroup, setSelectedActivityGroup] = useState<string | undefined>(undefined); // Dropdown selection
 
   // This handles the search marker's click
   const handleMarkerClick = (marker:google.maps.marker.AdvancedMarkerElement) => {
@@ -60,6 +72,28 @@ const GoogleMapComponent = ({selectedPlace}: Props) => {
     },
     [selectedId]
   );
+  const onAddToActivityGroupClick =() => {
+    setModalOpen(true);
+  }
+
+  const handleAddToGroup = () => {
+    // Find the group that we want to add to
+    const group = activityGroups.find((g) => g.id === selectedActivityGroup);
+          // Make a new Place Object and add it to the ActivityGroup
+          if(group && selectedPlace){
+            const newPlace: Place =  new Place(
+              selectedPlace.name, 
+              selectedPlace.adr_address,
+              selectedPlace.place_id,
+              selectedPlace.geometry?.location?.lat(),
+              selectedPlace.geometry?.location?.lng()
+            ); 
+            group?.addActivity(newPlace);
+            setActivityGroups([...activityGroups]); // Update the activity groups
+            setModalOpen(false);
+          }
+         
+  };
   // Handles when map is clicked
   const onMapClick = useCallback(() => {
     setSelectedId(null);
@@ -136,7 +170,7 @@ const GoogleMapComponent = ({selectedPlace}: Props) => {
               <InfoWindow
                 anchor={selectedMarker}
                 onCloseClick={handleInfowindowCloseClick}>
-                <Button>Add to Activity Group</Button>
+                <Button onClick={onAddToActivityGroupClick}>Add to Activity Group</Button>
               </InfoWindow>
           )}
           {infoWindowShown && selectedMarker && !isSearchLocation &&(
@@ -148,6 +182,37 @@ const GoogleMapComponent = ({selectedPlace}: Props) => {
               </InfoWindow>
           )}
           </Map>
+
+          {isModalOpen && (
+            <Dialog open={isModalOpen} onOpenChange={(isOpen) => setModalOpen(isOpen)}>
+               {/* <DialogTrigger></DialogTrigger> */}
+
+               <DialogContent>
+              <h2>Select an Activity Group</h2>
+              <Select
+                value={selectedActivityGroup}
+                onValueChange={(value) => setSelectedActivityGroup(value)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Activity Group" />
+                </SelectTrigger>
+                <SelectContent>
+                  {activityGroups.map((group) => (
+                    <SelectItem key={group.id} value={group.id}>
+                      {group.title}
+                    </SelectItem>
+                ))}
+                </SelectContent>
+              </Select>
+              <Button onClick={handleAddToGroup}>
+                Add
+              </Button>
+            </DialogContent>
+          </Dialog>
+          )}
+
+          
+          
           <MapHandler place={selectedPlace} />
     </>
    );
