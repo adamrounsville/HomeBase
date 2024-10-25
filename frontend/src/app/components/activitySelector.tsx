@@ -98,7 +98,10 @@ import { Props } from "next/script";
                             <div className="activity-items-container">
                               {group.activities!.map((activity, index) => (
                                 <div key={index} className="activity-item">
-                                  {activity.Name}
+                                  {activity.Name}<br/>
+                                  {activity.Latitude}<br />
+                                  {activity.Longitude}<br />
+                                  {activity.Place_ID}
                                 </div>
                               ))}
                             </div>
