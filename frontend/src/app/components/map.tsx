@@ -165,12 +165,12 @@ const GoogleMapComponent = ({selectedPlace, homebaseLocation, activityGroups, se
     }
   }, [homebasePosition]);
   
-  function removeTags(string: string) {
-    return string
-      .replace(/<[^>]*>/g, " ")
-      .replace(/\s{2,}/g, " ")
-      .trim();
-  }
+  // function removeTags(string: string) {
+  //   return string
+  //     .replace(/<[^>]*>/g, " ")
+  //     .replace(/\s{2,}/g, " ")
+  //     .trim();
+  // }
   return (
       <>
         <Map 
@@ -185,13 +185,13 @@ const GoogleMapComponent = ({selectedPlace, homebaseLocation, activityGroups, se
                 marker: google.maps.marker.AdvancedMarkerElement
               ) => handleMarkerClick(marker)}
               position={homebasePosition}
-            />
+          />
           <AdvancedMarkerWithRef
               onMarkerClick={(
                 marker: google.maps.marker.AdvancedMarkerElement
               ) => handleMarkerClick(marker)}
               position={position}
-            />
+          />
           {markers.map(({id, zIndex: zIndexDefault, position}) => {
             let zIndex = zIndexDefault;
 
@@ -227,43 +227,6 @@ const GoogleMapComponent = ({selectedPlace, homebaseLocation, activityGroups, se
               );
             }
           })}
-          {infoWindowShown && selectedMarker && isSearchLocation &&(
-              <InfoWindow
-                anchor={selectedMarker}
-                onCloseClick={handleInfowindowCloseClick}>
-                <Button onClick={onAddToActivityGroupClick}>Add to Activity Group</Button>
-              </InfoWindow>
-          )}
-          {infoWindowShown && selectedMarker && !isSearchLocation &&(
-              <InfoWindow
-                anchor={selectedMarker}
-                onCloseClick={handleInfowindowCloseClick}>
-                <h2>Marker {selectedId}</h2>
-                <p>Some location information</p>
-              </InfoWindow>
-          )}
-          </Map>
-
-          {isModalOpen && (
-            <Dialog open={isModalOpen} onOpenChange={(isOpen) => setModalOpen(isOpen)}>
-               {/* <DialogTrigger></DialogTrigger> */}
-
-               <DialogContent>
-              <h2>Select an Activity Group</h2>
-              <Select
-                value={selectedActivityGroup}
-                onValueChange={(value) => setSelectedActivityGroup(value)}
-
-              >
-                <Pin
-                  background={selectedId === id ? "#22ccff" : null}
-                  borderColor={selectedId === id ? "#1e89a1" : null}
-                  glyphColor={selectedId === id ? "#0f677a" : null}
-                />
-              </AdvancedMarkerWithRef>
-            );
-          }
-        })}
         {infoWindowShown && selectedMarker && isSearchLocation && (
           <InfoWindow
             anchor={selectedMarker}
