@@ -30,7 +30,7 @@ const HomeBaseLocationModal: React.FC<ModalProps> = ({ isOpen, onClose, onSave, 
       if (!places || !inputRef.current) return;
       const options = {
           componentRestrictions: { country: "us" },
-          fields: ["address_components", "geometry", "icon", "name", "place_id",  "adr_address"],
+          fields: ["address_components", "geometry", "icon", "name", "place_id",  "adr_address", "formatted_address"],
           strictBounds: false,
       };
 

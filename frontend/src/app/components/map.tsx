@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ActivityGroup, Place } from "@/lib/utils";
 interface Props {
   selectedPlace: google.maps.places.PlaceResult | null;
+  homebaseLocation: google.maps.places.PlaceResult | null;
   activityGroups: ActivityGroup[];
   setActivityGroups: (activityGroups: ActivityGroup[]) => void;
 }
@@ -21,14 +22,15 @@ const data = getData()
 const Z_INDEX_SELECTED = data.length;
 const Z_INDEX_HOVER = data.length + 1;
 
-const GoogleMapComponent = ({selectedPlace, activityGroups, setActivityGroups}: Props) => {
+const GoogleMapComponent = ({selectedPlace, homebaseLocation, activityGroups, setActivityGroups}: Props) => {
 
   // Markers contains the array and information pertaining to the "fake data" markers
   const [markers] = useState(data);
+  
 
   // This is the latitude and longitude that is returned from the search and set to display the search marker
   const [position, setPosition] = useState<{lat: number, lng: number} | undefined>({lat:  40.233845, lng: -111.658531});
-  
+  const [homebasePosition, setHomebasePosition] = useState<{lat: number, lng: number} | undefined>();
   //These are the markers selected and if the marker is a search location or activity group 
   const [selectedMarker, setSelectedMarker] = useState<google.maps.marker.AdvancedMarkerElement | null>(null);
   const [infoWindowShown, setInfoWindowShown] = useState(false);
@@ -116,15 +118,46 @@ const GoogleMapComponent = ({selectedPlace, activityGroups, setActivityGroups}: 
     
   }, [selectedPlace]);
 
+  useEffect(() => {
+    if (homebaseLocation?.geometry?.location) {
+      const latitude = homebaseLocation.geometry.location.lat();
+      const longitude = homebaseLocation.geometry.location.lng();
+      setHomebasePosition({ lat: latitude, lng: longitude });
+    }
+    
+  }, [homebaseLocation]);
+
+  useEffect(() => {
+    const storedLatitude = localStorage.getItem('homebasePositionLat');
+    const storedLongitude = localStorage.getItem('homebasePositionLng');
+    if (storedLatitude && storedLongitude){
+      const latitude = parseFloat(storedLatitude);
+      const longitude = parseFloat(storedLongitude);
+      setHomebasePosition({lat:latitude, lng: longitude})
+    }
+  
+  }, []);
+  useEffect(() => {
+    if (homebasePosition) {
+      setPosition(homebasePosition);
+    }
+  }, [homebasePosition]);
+
   return (
       <>
         <Map 
-          defaultCenter={position} 
+          defaultCenter={position}
           defaultZoom={10} 
           onClick={onMapClick}
           clickableIcons={false}
           mapId="HOMEBASE_MAP_ID"
           >
+          <AdvancedMarkerWithRef
+              onMarkerClick={(
+                marker: google.maps.marker.AdvancedMarkerElement
+              ) => handleMarkerClick(marker)}
+              position={homebasePosition}
+            />
           <AdvancedMarkerWithRef
               onMarkerClick={(
                 marker: google.maps.marker.AdvancedMarkerElement
@@ -210,10 +243,7 @@ const GoogleMapComponent = ({selectedPlace, activityGroups, setActivityGroups}: 
             </DialogContent>
           </Dialog>
           )}
-
-          
-          
-          <MapHandler place={selectedPlace} />
+          <MapHandler place={selectedPlace || homebaseLocation} />
     </>
    );
 }

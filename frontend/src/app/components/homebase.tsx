@@ -6,10 +6,11 @@ import { Input } from '@/components/ui/input';
 import HomeBaseLocationModal from './homebaseModal';
 
 interface Props {
-    onPlaceSelect: (place: google.maps.places.PlaceResult | null) => void;
+    homebaseLocation: google.maps.places.PlaceResult | null;
+    onHomebaseSelect: (place: google.maps.places.PlaceResult | null) => void;
   }
 
-const Homebase = ({onPlaceSelect}: Props) => {
+const Homebase = ({onHomebaseSelect: onHomebaseSelect, homebaseLocation}: Props) => {
     const [homebaseAddress, setHomebaseAddress] = useState<string>("")
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
@@ -28,9 +29,16 @@ const Homebase = ({onPlaceSelect}: Props) => {
         }
     }, []);
 
-    const handleSave = (address: string) => {
-        localStorage.setItem('homebaseLocation', address);
-        setHomebaseAddress(address);
+    const handleSave = () => {
+        if(homebaseLocation?.formatted_address && homebaseLocation?.geometry?.location){
+            localStorage.setItem('homebaseLocation', homebaseLocation?.formatted_address);
+            const latitude = homebaseLocation.geometry.location.lat();
+            const longitude = homebaseLocation.geometry.location.lng();
+            localStorage.setItem('homebasePositionLat', latitude.toString());
+            localStorage.setItem('homebasePositionLng', longitude.toString());
+            setHomebaseAddress(homebaseLocation?.formatted_address);
+        }
+        
     };
 
     const openModal = () => {
@@ -74,7 +82,7 @@ const Homebase = ({onPlaceSelect}: Props) => {
                 isOpen={isModalOpen} 
                 onClose={closeModal} 
                 onSave={handleSave}
-                onPlaceSelect={onPlaceSelect}
+                onPlaceSelect={onHomebaseSelect}
                 
             />
         </div>
