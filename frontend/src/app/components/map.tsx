@@ -22,6 +22,7 @@ import {
 import { ActivityGroup, Place } from "@/lib/utils";
 interface Props {
   selectedPlace: google.maps.places.PlaceResult | null;
+  homebaseLocation: google.maps.places.PlaceResult | null;
   activityGroups: ActivityGroup[];
   setActivityGroups: (activityGroups: ActivityGroup[]) => void;
 }
@@ -34,22 +35,20 @@ const data = getData()
 const Z_INDEX_SELECTED = data.length;
 const Z_INDEX_HOVER = data.length + 1;
 
-const GoogleMapComponent = ({
-  selectedPlace,
-  activityGroups,
-  setActivityGroups,
-}: Props) => {
+
+const GoogleMapComponent = ({selectedPlace, homebaseLocation, activityGroups, setActivityGroups}: Props) => {
+
   // Markers contains the array and information pertaining to the "fake data" markers
   const [markers] = useState(data);
+  
 
   // This is the latitude and longitude that is returned from the search and set to display the search marker
-  const [position, setPosition] = useState<
-    { lat: number; lng: number } | undefined
-  >({ lat: 40.233845, lng: -111.658531 });
 
-  //These are the markers selected and if the marker is a search location or activity group
-  const [selectedMarker, setSelectedMarker] =
-    useState<google.maps.marker.AdvancedMarkerElement | null>(null);
+  const [position, setPosition] = useState<{lat: number, lng: number} | undefined>({lat:  40.233845, lng: -111.658531});
+  const [homebasePosition, setHomebasePosition] = useState<{lat: number, lng: number} | undefined>();
+  //These are the markers selected and if the marker is a search location or activity group 
+  const [selectedMarker, setSelectedMarker] = useState<google.maps.marker.AdvancedMarkerElement | null>(null);
+
   const [infoWindowShown, setInfoWindowShown] = useState(false);
   const [isSearchLocation, setSearchLocation] = useState(false);
 
@@ -140,56 +139,121 @@ const GoogleMapComponent = ({
     }
   }, [selectedPlace]);
 
+
+  useEffect(() => {
+    if (homebaseLocation?.geometry?.location) {
+      const latitude = homebaseLocation.geometry.location.lat();
+      const longitude = homebaseLocation.geometry.location.lng();
+      setHomebasePosition({ lat: latitude, lng: longitude });
+    }
+    
+  }, [homebaseLocation]);
+
+  useEffect(() => {
+    const storedLatitude = localStorage.getItem('homebasePositionLat');
+    const storedLongitude = localStorage.getItem('homebasePositionLng');
+    if (storedLatitude && storedLongitude){
+      const latitude = parseFloat(storedLatitude);
+      const longitude = parseFloat(storedLongitude);
+      setHomebasePosition({lat:latitude, lng: longitude})
+    }
+  
+  }, []);
+  useEffect(() => {
+    if (homebasePosition) {
+      setPosition(homebasePosition);
+    }
+  }, [homebasePosition]);
+  
   function removeTags(string: string) {
     return string
       .replace(/<[^>]*>/g, " ")
       .replace(/\s{2,}/g, " ")
       .trim();
   }
-
   return (
-    <>
-      <Map
-        defaultCenter={position}
-        defaultZoom={10}
-        onClick={onMapClick}
-        clickableIcons={false}
-        mapId="HOMEBASE_MAP_ID"
-      >
-        <AdvancedMarkerWithRef
-          onMarkerClick={(marker: google.maps.marker.AdvancedMarkerElement) =>
-            handleMarkerClick(marker)
-          }
-          position={position}
-        />
-        {markers.map(({ id, zIndex: zIndexDefault, position }) => {
-          let zIndex = zIndexDefault;
+      <>
+        <Map 
+          defaultCenter={position}
+          defaultZoom={10} 
+          onClick={onMapClick}
+          clickableIcons={false}
+          mapId="HOMEBASE_MAP_ID"
+          >
+          <AdvancedMarkerWithRef
+              onMarkerClick={(
+                marker: google.maps.marker.AdvancedMarkerElement
+              ) => handleMarkerClick(marker)}
+              position={homebasePosition}
+            />
+          <AdvancedMarkerWithRef
+              onMarkerClick={(
+                marker: google.maps.marker.AdvancedMarkerElement
+              ) => handleMarkerClick(marker)}
+              position={position}
+            />
+          {markers.map(({id, zIndex: zIndexDefault, position}) => {
+            let zIndex = zIndexDefault;
 
-          if (hoverId === id) {
-            zIndex = Z_INDEX_HOVER;
-          }
+            if (hoverId === id) {
+              zIndex = Z_INDEX_HOVER;
+            }
 
-          if (selectedId === id) {
-            zIndex = Z_INDEX_SELECTED;
-          }
+            if (selectedId === id) {
+              zIndex = Z_INDEX_SELECTED;
+            }
 
-          if (placeMarkers) {
-            return (
-              <AdvancedMarkerWithRef
-                onMarkerClick={(
-                  marker: google.maps.marker.AdvancedMarkerElement
-                ) => onMarkerClick(id, marker)}
-                onMouseEnter={() => onMouseEnter(id)}
-                onMouseLeave={onMouseLeave}
-                key={id}
-                zIndex={zIndex}
-                className="custom-marker"
-                style={{
-                  transform: `scale(${
-                    [hoverId, selectedId].includes(id) ? 1.4 : 1
-                  })`,
-                }}
-                position={position}
+            if (placeMarkers) {
+              return (
+                <AdvancedMarkerWithRef
+                  onMarkerClick={(
+                    marker: google.maps.marker.AdvancedMarkerElement
+                  ) => onMarkerClick(id, marker)}
+                  onMouseEnter={() => onMouseEnter(id)}
+                  onMouseLeave={onMouseLeave}
+                  key={id}
+                  zIndex={zIndex}
+                  className="custom-marker"
+                  style={{
+                    transform: `scale(${[hoverId, selectedId].includes(id) ? 1.4 : 1})`
+                  }}
+                  position={position}>
+                  <Pin
+                    background={selectedId === id ? '#22ccff' : null}
+                    borderColor={selectedId === id ? '#1e89a1' : null}
+                    glyphColor={selectedId === id ? '#0f677a' : null}
+                  />
+                </AdvancedMarkerWithRef>
+              );
+            }
+          })}
+          {infoWindowShown && selectedMarker && isSearchLocation &&(
+              <InfoWindow
+                anchor={selectedMarker}
+                onCloseClick={handleInfowindowCloseClick}>
+                <Button onClick={onAddToActivityGroupClick}>Add to Activity Group</Button>
+              </InfoWindow>
+          )}
+          {infoWindowShown && selectedMarker && !isSearchLocation &&(
+              <InfoWindow
+                anchor={selectedMarker}
+                onCloseClick={handleInfowindowCloseClick}>
+                <h2>Marker {selectedId}</h2>
+                <p>Some location information</p>
+              </InfoWindow>
+          )}
+          </Map>
+
+          {isModalOpen && (
+            <Dialog open={isModalOpen} onOpenChange={(isOpen) => setModalOpen(isOpen)}>
+               {/* <DialogTrigger></DialogTrigger> */}
+
+               <DialogContent>
+              <h2>Select an Activity Group</h2>
+              <Select
+                value={selectedActivityGroup}
+                onValueChange={(value) => setSelectedActivityGroup(value)}
+
               >
                 <Pin
                   background={selectedId === id ? "#22ccff" : null}
@@ -250,14 +314,16 @@ const GoogleMapComponent = ({
                     {group.title}
                   </SelectItem>
                 ))}
-              </SelectContent>
-            </Select>
-            <Button onClick={handleAddToGroup}>Add</Button>
-          </DialogContent>
-        </Dialog>
-      )}
+                </SelectContent>
+              </Select>
+              <Button onClick={handleAddToGroup}>
+                Add
+              </Button>
+            </DialogContent>
+          </Dialog>
+          )}
+          <MapHandler place={selectedPlace || homebaseLocation} />
 
-      <MapHandler place={selectedPlace} />
     </>
   );
 };

@@ -10,7 +10,7 @@ import { APIProvider } from "@vis.gl/react-google-maps";
 import { ActivityGroup } from "@/lib/utils";
 
 export default function Home() {
-
+  const [homebaseLocation, setHomebaseLocation] = useState<google.maps.places.PlaceResult | null>(null);
   const [selectedPlace, setSelectedPlace] = useState<google.maps.places.PlaceResult | null>(null);
   const [activityGroups, setActivityGroups] = useState([
     new ActivityGroup("group-id-1", "Snorkelling", []),
@@ -29,7 +29,7 @@ export default function Home() {
             <div className="container">
 
               <header className="header">
-                <Homebase onPlaceSelect={setSelectedPlace}/>
+                <Homebase  homebaseLocation = {homebaseLocation} onHomebaseSelect={setHomebaseLocation}/>
                 <SearchBar onPlaceSelect={setSelectedPlace}/>
               </header>
             
@@ -38,7 +38,7 @@ export default function Home() {
               </aside>
 
               <section className="map">
-                <GoogleMapComponent selectedPlace={selectedPlace} activityGroups={activityGroups} setActivityGroups={setActivityGroups}/>
+                <GoogleMapComponent selectedPlace={selectedPlace}  homebaseLocation= {homebaseLocation} activityGroups={activityGroups} setActivityGroups={setActivityGroups}/>
               </section>
 
               <section className="schedule">
