@@ -13,7 +13,8 @@ class TestInfoManagerDict(unittest.TestCase):
 
     def test_add_place(self):
         user_id = self.manager.add_user(40.7128, -74.0060)
-        self.manager.add_place(user_id, "Central Park", "park1", 40.7829, -73.9654)
+        self.manager.add_activity_group(user_id, "parks")
+        self.manager.add_place("parks", user_id, "Central Park", "park1", 40.7829, -73.9654)
         
         places = self.manager.get_places(user_id)
         self.assertEqual(len(places), 1)
@@ -24,8 +25,11 @@ class TestInfoManagerDict(unittest.TestCase):
 
     def test_get_places(self):
         user_id = self.manager.add_user(40.7128, -74.0060)
-        self.manager.add_place(user_id, "Central Park", "park1", 40.7829, -73.9654)
-        self.manager.add_place(user_id, "Times Square", "square1", 40.7580, -73.9855)
+        self.manager.add_activity_group(user_id, "parks")
+        self.manager.add_activity_group(user_id, "squares")
+        
+        self.manager.add_place("parks", user_id, "Central Park", "park1", 40.7829, -73.9654)
+        self.manager.add_place("squares", user_id, "Times Square", "square1", 40.7580, -73.9855)
 
         places = self.manager.get_places(user_id)
         self.assertEqual(len(places), 2)
@@ -39,8 +43,11 @@ class TestInfoManagerDict(unittest.TestCase):
         self.assertNotEqual(user1, user2)
         self.assertEqual(len(self.manager.data), 2)
 
-        self.manager.add_place(user1, "Central Park", "park1", 40.7829, -73.9654)
-        self.manager.add_place(user2, "Hollywood Sign", "sign1", 34.1341, -118.3215)
+        self.manager.add_activity_group(user1, "parks")
+        self.manager.add_activity_group(user2, "landmarks")
+
+        self.manager.add_place("parks", user1, "Central Park", "park1", 40.7829, -73.9654)
+        self.manager.add_place("landmarks", user2, "Hollywood Sign", "sign1", 34.1341, -118.3215)
 
         places1 = self.manager.get_places(user1)
         places2 = self.manager.get_places(user2)
@@ -50,5 +57,31 @@ class TestInfoManagerDict(unittest.TestCase):
         self.assertEqual(places1[0].name, "Central Park")
         self.assertEqual(places2[0].name, "Hollywood Sign")
 
+    def test_activity_group_exists(self):
+        user_id = self.manager.add_user(40.7128, -74.0060)
+        self.manager.add_activity_group(user_id, "parks")
+
+        self.assertTrue(self.manager.activity_group_exists(user_id, "parks"))
+        self.assertFalse(self.manager.activity_group_exists(user_id, "squares"))
+
+    def test_delete_place(self):
+        user_id = self.manager.add_user(40.7128, -74.0060)
+        self.manager.add_activity_group(user_id, "parks")
+        self.manager.add_place("parks", user_id, "Central Park", "park1", 40.7829, -73.9654)
+        
+        self.manager.delete_place(user_id, "parks", "park1")
+        places = self.manager.get_places(user_id)
+        self.assertEqual(len(places), 0)
+
+    def test_delete_activity_group(self):
+        user_id = self.manager.add_user(40.7128, -74.0060)
+        self.manager.add_activity_group(user_id, "parks")
+        self.manager.add_activity_group(user_id, "squares")
+
+        self.manager.delete_activity_group(user_id, "parks")
+        self.assertFalse(self.manager.activity_group_exists(user_id, "parks"))
+        self.assertTrue(self.manager.activity_group_exists(user_id, "squares"))
+
 if __name__ == '__main__':
     unittest.main()
+
