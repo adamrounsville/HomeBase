@@ -114,7 +114,7 @@ def get_activity_group(user_id: Annotated[str, Body()], activity_group: Annotate
 
     return { "places" : places }
 
-@app.post("/activity-group/delete")
+@app.delete("/activity-group/delete")
 def delete_activity_group(user_id: Annotated[str, Body()], activity_group: Annotated[str, Body()]):
     """
     Takes in a user ID and an activity group name from the frontend, deletes the activity group from the user's places
