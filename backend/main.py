@@ -31,7 +31,7 @@ app = FastAPI()
 @app.post("/place/add")
 def add_place(user_id: Annotated[str, Body()], place_name: Annotated[str, Body()], activity_group: Annotated[str, Body()]):
     """
-    Takes in a user ID,location name, and activity group from the frontend, adds a Place made with information from
+    Takes in a user ID, location name, and activity group from the frontend, adds a Place made with information from
     the Google Places API to the user's places, and returns the Place object.
     """
     try:
@@ -78,7 +78,7 @@ def get_place(user_id: str, place_name: str):
 @app.delete("/place/delete")
 def delete_place(user_id: Annotated[str, Body()], activity_group: Annotated[str, Body()], place_id: Annotated[str, Body()]):
     """
-    Takes in a user ID and a location name from the frontend, deletes the place from the user's places
+    Takes in a user ID, location name, and activity group from the frontend, deletes the place from the user's places
     """
     if user_id not in db.data:
         raise HTTPException(status_code=404, detail="User not found")
