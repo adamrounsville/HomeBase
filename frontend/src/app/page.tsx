@@ -17,6 +17,7 @@ export default function Home() {
     new ActivityGroup("group-id-2", "Beaches", []),
     new ActivityGroup("group-id-3", "Resturants", []),
   ]);
+  const [openGroup, setOpenGroup] = useState<string | null>(null);
   
   return (
     <div>
@@ -29,16 +30,33 @@ export default function Home() {
             <div className="container">
 
               <header className="header">
-                <Homebase  homebaseLocation = {homebaseLocation} onHomebaseSelect={setHomebaseLocation}/>
-                <SearchBar onPlaceSelect={setSelectedPlace}/>
+                <Homebase  
+                homebaseLocation = {homebaseLocation} 
+                onHomebaseSelect={setHomebaseLocation}
+                />
+                <SearchBar 
+                onPlaceSelect={setSelectedPlace}
+                />
               </header>
             
               <aside className="sidebar">
-                <ActivitySelector activityGroups={activityGroups} setActivityGroups={setActivityGroups}/>
+                <ActivitySelector 
+                activityGroups={activityGroups} 
+                openGroup = {openGroup} 
+                setActivityGroups={setActivityGroups} 
+                setOpenGroup={setOpenGroup}
+                />
               </aside>
 
               <section className="map">
-                <GoogleMapComponent selectedPlace={selectedPlace}  homebaseLocation= {homebaseLocation} activityGroups={activityGroups} setActivityGroups={setActivityGroups}/>
+                <GoogleMapComponent 
+                selectedPlace={selectedPlace}  
+                homebaseLocation= {homebaseLocation} 
+                openGroup={openGroup}
+                activityGroups={activityGroups} 
+                setActivityGroups={setActivityGroups}
+                setOpenGroup={setOpenGroup}
+                />
               </section>
 
               <section className="schedule">
