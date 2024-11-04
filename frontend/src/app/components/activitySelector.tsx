@@ -22,21 +22,24 @@ import { ActivityGroup, Place } from "@/lib/utils";
 import { Props } from "next/script";
 interface props {
   activityGroups: ActivityGroup[];
+  openGroup: string | null;
   setActivityGroups: (activityGroups: ActivityGroup[]) => void;
+  setOpenGroup: (group: any) => void;
+  
 }
 
-const ActivitySelector = ({ activityGroups, setActivityGroups }: props) => {
+const ActivitySelector = ({ activityGroups, openGroup, setActivityGroups, setOpenGroup }: props) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   // State to track new activity input
   const [newActivityTitle, setNewActivityTitle] = useState("");
 
-  // State to track the currently open group
-  const [openGroup, setOpenGroup] = useState<string | null>(null);
+  // // State to track the currently open group
+  // const [openGroup, setOpenGroup] = useState<string | null>(null);
 
   // Function to toggle group dropdown
   const toggleGroup = (id: string) => {
-    setOpenGroup((prevOpenGroup) => (prevOpenGroup === id ? null : id));
+    setOpenGroup((prevOpenGroup: string) => (prevOpenGroup === id ? null : id));
   };
 
   // Old functionality unsure if we will need to refactor to this old version later on so keep for now ??

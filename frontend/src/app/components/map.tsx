@@ -23,8 +23,10 @@ import { ActivityGroup, Place } from "@/lib/utils";
 interface Props {
   selectedPlace: google.maps.places.PlaceResult | null;
   homebaseLocation: google.maps.places.PlaceResult | null;
+  openGroup: string | null;
   activityGroups: ActivityGroup[];
   setActivityGroups: (activityGroups: ActivityGroup[]) => void;
+  setOpenGroup: (group: any) => void;
 }
 
 // This is to load in marker Fake Data
@@ -32,16 +34,9 @@ const data = getData()
   .sort((a, b) => b.position.lat - a.position.lat)
   .map((dataItem, index) => ({ ...dataItem, zIndex: index }));
 
-const Z_INDEX_SELECTED = data.length;
-const Z_INDEX_HOVER = data.length + 1;
-
-
-const GoogleMapComponent = ({selectedPlace, homebaseLocation, activityGroups, setActivityGroups}: Props) => {
-
-  // Markers contains the array and information pertaining to the "fake data" markers
-  const [markers] = useState(data);
+const GoogleMapComponent = ({selectedPlace, homebaseLocation, openGroup, activityGroups, setActivityGroups, setOpenGroup}: Props) => {  
   
-
+  const [displayMarkers, setDisplayMarkers] = useState<Place[] | undefined>();
   // This is the latitude and longitude that is returned from the search and set to display the search marker
 
   const [position, setPosition] = useState<{lat: number, lng: number} | undefined>({lat:  40.233845, lng: -111.658531});
@@ -71,6 +66,7 @@ const GoogleMapComponent = ({selectedPlace, homebaseLocation, activityGroups, se
   const handleMarkerClick = (
     marker: google.maps.marker.AdvancedMarkerElement
   ) => {
+    
     setInfoWindowShown(true);
     setSelectedMarker(marker);
     setSearchLocation(true);
@@ -164,13 +160,23 @@ const GoogleMapComponent = ({selectedPlace, homebaseLocation, activityGroups, se
       setPosition(homebasePosition);
     }
   }, [homebasePosition]);
+
+  useEffect(() => {
+    if (openGroup) {
+      const selectedGroup = activityGroups.find((group) => group.id === openGroup);
+      setDisplayMarkers(selectedGroup?.activities);
+    }
+    else {
+      setDisplayMarkers(undefined); // clear markers if no group is selected
+    }
+  }), [openGroup]
   
-  // function removeTags(string: string) {
-  //   return string
-  //     .replace(/<[^>]*>/g, " ")
-  //     .replace(/\s{2,}/g, " ")
-  //     .trim();
-  // }
+  function removeTags(string: string) {
+    return string
+      .replace(/<[^>]*>/g, " ")
+      .replace(/\s{2,}/g, " ")
+      .trim();
+  }
   return (
       <>
         <Map 
@@ -180,6 +186,26 @@ const GoogleMapComponent = ({selectedPlace, homebaseLocation, activityGroups, se
           clickableIcons={false}
           mapId="HOMEBASE_MAP_ID"
           >
+          {displayMarkers && displayMarkers.map((place) => (
+            
+            <AdvancedMarkerWithRef
+              key={place.Place_ID}
+              position={{lat:place.Latitude ?? 0, lng : place.Longitude ?? 0}}
+              onMarkerClick={(
+                marker: google.maps.marker.AdvancedMarkerElement
+              ) => handleMarkerClick(marker)}
+              onMouseEnter={() => onMouseEnter(place.Place_ID ?? "NO_ID")}
+              onMouseLeave={onMouseLeave}
+            >
+              <Pin
+               background={selectedId === place.Place_ID ? '#22ccff' : null}
+               borderColor={selectedId === place.Place_ID ? '#1e89a1' : null}
+               glyphColor={selectedId === place.Place_ID ? '#0f677a' : null} 
+              />
+            </AdvancedMarkerWithRef>
+
+          ))}
+
           <AdvancedMarkerWithRef
               onMarkerClick={(
                 marker: google.maps.marker.AdvancedMarkerElement
@@ -192,41 +218,6 @@ const GoogleMapComponent = ({selectedPlace, homebaseLocation, activityGroups, se
               ) => handleMarkerClick(marker)}
               position={position}
           />
-          {markers.map(({id, zIndex: zIndexDefault, position}) => {
-            let zIndex = zIndexDefault;
-
-            if (hoverId === id) {
-              zIndex = Z_INDEX_HOVER;
-            }
-
-            if (selectedId === id) {
-              zIndex = Z_INDEX_SELECTED;
-            }
-
-            if (placeMarkers) {
-              return (
-                <AdvancedMarkerWithRef
-                  onMarkerClick={(
-                    marker: google.maps.marker.AdvancedMarkerElement
-                  ) => onMarkerClick(id, marker)}
-                  onMouseEnter={() => onMouseEnter(id)}
-                  onMouseLeave={onMouseLeave}
-                  key={id}
-                  zIndex={zIndex}
-                  className="custom-marker"
-                  style={{
-                    transform: `scale(${[hoverId, selectedId].includes(id) ? 1.4 : 1})`
-                  }}
-                  position={position}>
-                  <Pin
-                    background={selectedId === id ? '#22ccff' : null}
-                    borderColor={selectedId === id ? '#1e89a1' : null}
-                    glyphColor={selectedId === id ? '#0f677a' : null}
-                  />
-                </AdvancedMarkerWithRef>
-              );
-            }
-          })}
         {infoWindowShown && selectedMarker && isSearchLocation && (
           <InfoWindow
             anchor={selectedMarker}
@@ -260,7 +251,6 @@ const GoogleMapComponent = ({selectedPlace, homebaseLocation, activityGroups, se
           open={isModalOpen}
           onOpenChange={(isOpen) => setModalOpen(isOpen)}
         >
-          {/* <DialogTrigger></DialogTrigger> */}
 
           <DialogContent>
             <h2>Select an Activity Group</h2>
