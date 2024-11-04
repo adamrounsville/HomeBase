@@ -5,28 +5,27 @@ from fastapi import FastAPI, Body, HTTPException
 from pydantic import BaseModel
 import googlemaps
 from contextlib import asynccontextmanager
+from starlette.middleware.cors import CORSMiddleware
 
+from models.place import Place
+from models.latlon import LatLon
+from models.route import Route
 from info_manager_dict import InfoManagerDict
 
-class Place(BaseModel):
-    name: str
-    ID: str
-    latitude: float
-    longitude: float
-
-class LatLon(BaseModel):
-    latitude: float
-    longitude: float
-
-class Route(BaseModel):
-    # TODO
-    pass
+CORS_CONFIG = {
+    "allow_origins": ["*"],
+    "allow_credentials": True,
+    "allow_methods": ["*"],
+    "allow_headers": ["*"],
+}
 
 load_dotenv()
 
 db = InfoManagerDict()
 gmaps = googlemaps.Client(key=os.getenv("GOOGLE_MAPS_API_KEY"))
+
 app = FastAPI()
+app.add_middleware(CORSMiddleware, **CORS_CONFIG)
 
 @app.post("/place/add")
 def add_place(user_id: Annotated[str, Body()], place_name: Annotated[str, Body()], activity_group: Annotated[str, Body()]):
@@ -132,7 +131,9 @@ def set_homebase(address: Annotated[str, Body()]):
     Takes in a address from the frontend, sets the information for use in the backend, and 
     returns the UUID associated with the user.
     """
+    print(address)
     geocode_result = gmaps.geocode(address)
+    print(geocode_result)
 
     lat = geocode_result[0]['geometry']['location']['lat']
     lng = geocode_result[0]['geometry']['location']['lng']
