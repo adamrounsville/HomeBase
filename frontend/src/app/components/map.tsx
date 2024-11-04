@@ -66,6 +66,7 @@ const GoogleMapComponent = ({selectedPlace, homebaseLocation, openGroup, activit
   const handleMarkerClick = (
     marker: google.maps.marker.AdvancedMarkerElement
   ) => {
+    
     setInfoWindowShown(true);
     setSelectedMarker(marker);
     setSearchLocation(true);
@@ -190,7 +191,9 @@ const GoogleMapComponent = ({selectedPlace, homebaseLocation, openGroup, activit
             <AdvancedMarkerWithRef
               key={place.Place_ID}
               position={{lat:place.Latitude ?? 0, lng : place.Longitude ?? 0}}
-              onMarkerClick={handleMarkerClick}
+              onMarkerClick={(
+                marker: google.maps.marker.AdvancedMarkerElement
+              ) => handleMarkerClick(marker)}
               onMouseEnter={() => onMouseEnter(place.Place_ID ?? "NO_ID")}
               onMouseLeave={onMouseLeave}
             >
@@ -200,7 +203,7 @@ const GoogleMapComponent = ({selectedPlace, homebaseLocation, openGroup, activit
                glyphColor={selectedId === place.Place_ID ? '#0f677a' : null} 
               />
             </AdvancedMarkerWithRef>
-            
+
           ))}
 
           <AdvancedMarkerWithRef
