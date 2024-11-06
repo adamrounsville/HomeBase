@@ -18,22 +18,21 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
-import { ActivityGroup } from "@/lib/utils";
+import { ActivityGroup, Place } from "@/lib/utils";
 
 interface props {
   activityGroups: ActivityGroup[];
   openGroup: string | null;
   selectedActivity: number | null;
   setActivityGroups: (activityGroups: ActivityGroup[]) => void;
+  addToDailyPlan: (activity: Place) => void; // New prop
   setOpenGroup: (group: any) => void;
   setSelectedActivity: (activityId:number) => void;
   
 }
 
-const ActivitySelector = ({ activityGroups, openGroup, selectedActivity, setActivityGroups, setOpenGroup, setSelectedActivity}: props) => {
+const ActivitySelector = ({ activityGroups, openGroup, addToDailyPlan,selectedActivity, setActivityGroups, setOpenGroup, setSelectedActivity}: props) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-
-  // State to track new activity input
   const [newActivityTitle, setNewActivityTitle] = useState("");
 
   // Function to toggle group dropdown
@@ -49,7 +48,6 @@ const ActivitySelector = ({ activityGroups, openGroup, selectedActivity, setActi
         newActivityTitle,
         []
       );
-      // Ensure newItem is an instance of ActivityGroup
       setActivityGroups([...activityGroups, newItem]);
       setNewActivityTitle("");
       setIsDialogOpen(false);
@@ -81,6 +79,7 @@ const ActivitySelector = ({ activityGroups, openGroup, selectedActivity, setActi
       )
     );
   };
+
   return (
     <>
       <div className="activity-selector-header">
@@ -125,7 +124,7 @@ const ActivitySelector = ({ activityGroups, openGroup, selectedActivity, setActi
                     Delete Group
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem>Add to Map</DropdownMenuItem>
+                  <DropdownMenuItem>Open / Close</DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
@@ -155,7 +154,11 @@ const ActivitySelector = ({ activityGroups, openGroup, selectedActivity, setActi
                             Remove
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
-                          <DropdownMenuItem>Add To Daily Plan</DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={() => addToDailyPlan(activity)}
+                          >
+                            Add To Daily Plan
+                          </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </div>
@@ -172,4 +175,5 @@ const ActivitySelector = ({ activityGroups, openGroup, selectedActivity, setActi
     </>
   );
 };
+
 export default ActivitySelector;
