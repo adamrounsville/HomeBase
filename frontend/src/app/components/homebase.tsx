@@ -4,13 +4,15 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import HomeBaseLocationModal from './homebaseModal';
+import { Place } from '@/lib/utils';
 
 interface Props {
-    homebaseLocation: google.maps.places.PlaceResult | null;
-    onHomebaseSelect: (place: google.maps.places.PlaceResult | null) => void;
+    homebaseLocation: Place | null;
+    onHomebaseSelect: (place: Place | null) => void;
+    setFocusHomebase: (focusHomebase: boolean) => void;
   }
 
-const Homebase = ({onHomebaseSelect: onHomebaseSelect, homebaseLocation}: Props) => {
+const Homebase = ({onHomebaseSelect: onHomebaseSelect, homebaseLocation, setFocusHomebase}: Props) => {
     const [homebaseAddress, setHomebaseAddress] = useState<string>("")
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
@@ -30,15 +32,18 @@ const Homebase = ({onHomebaseSelect: onHomebaseSelect, homebaseLocation}: Props)
     }, []);
 
     const handleSave = () => {
-        if(homebaseLocation?.formatted_address && homebaseLocation?.geometry?.location){
-            localStorage.setItem('homebaseLocation', homebaseLocation?.formatted_address);
-            const latitude = homebaseLocation.geometry.location.lat();
-            const longitude = homebaseLocation.geometry.location.lng();
-            localStorage.setItem('homebasePositionLat', latitude.toString());
-            localStorage.setItem('homebasePositionLng', longitude.toString());
-            setHomebaseAddress(homebaseLocation?.formatted_address);
+        if(homebaseLocation){
+            localStorage.setItem('homebaseLocation', homebaseLocation.Address!);
+            const latitude = homebaseLocation.Latitude;
+            const longitude = homebaseLocation.Longitude
+            localStorage.setItem('homebasePositionLat', latitude!.toString());
+            localStorage.setItem('homebasePositionLng', longitude!.toString());
+            localStorage.setItem('homebaseName', homebaseLocation.Name!);
+            localStorage.setItem('homebaseID', homebaseLocation.Place_ID!);
+            const viewport  = JSON.stringify(homebaseLocation.Viewport.toJSON())
+            localStorage.setItem('homebaseViewport', viewport! )
+            setHomebaseAddress(homebaseLocation.Address!);
         }
-        
     };
 
     const openModal = () => {
@@ -47,6 +52,10 @@ const Homebase = ({onHomebaseSelect: onHomebaseSelect, homebaseLocation}: Props)
 
     const closeModal = () => {
         setIsModalOpen(false);
+    };
+
+    const handleFocusRequest = () => {
+        setFocusHomebase(true);
     };
  
     const HomebaseInput = () => {
@@ -78,6 +87,13 @@ const Homebase = ({onHomebaseSelect: onHomebaseSelect, homebaseLocation}: Props)
             <h2 className='homebase-title'>Homebase:</h2>
             <HomebaseInput/>
             <EditButton/>
+            <Button 
+                className = "edit-button" 
+                type="submit"
+                onClick={handleFocusRequest}
+                >
+                <i className="fas fa-home"></i>
+            </Button>
             <HomeBaseLocationModal 
                 isOpen={isModalOpen} 
                 onClose={closeModal} 

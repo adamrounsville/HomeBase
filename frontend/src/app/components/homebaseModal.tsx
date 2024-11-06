@@ -1,6 +1,7 @@
 "use client"
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Place } from '@/lib/utils';
 import {useMapsLibrary } from '@vis.gl/react-google-maps';
 import React, { useEffect, useRef, useState } from 'react';
 
@@ -8,7 +9,7 @@ interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: (address: string) => void;
-  onPlaceSelect: (place: google.maps.places.PlaceResult | null) => void;
+  onPlaceSelect: (place: Place | null) => void;
 }
 
 const HomeBaseLocationModal: React.FC<ModalProps> = ({ isOpen, onClose, onSave, onPlaceSelect}) => {
@@ -41,7 +42,9 @@ const HomeBaseLocationModal: React.FC<ModalProps> = ({ isOpen, onClose, onSave, 
       if (!placeAutocomplete) return;
 
       placeAutocomplete.addListener('place_changed', () => {
-      onPlaceSelect(placeAutocomplete.getPlace());
+      const autocomplete_place = placeAutocomplete.getPlace()
+      const place = new Place(autocomplete_place.name, autocomplete_place.formatted_address, autocomplete_place.place_id, autocomplete_place.geometry?.location?.lat(), autocomplete_place.geometry?.location?.lng(), autocomplete_place.geometry?.viewport)
+      onPlaceSelect(place);
       });
   }, [onPlaceSelect, placeAutocomplete]);
   

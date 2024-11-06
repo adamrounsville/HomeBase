@@ -11,13 +11,15 @@ export class Place {
   Place_ID: string | undefined;
   Latitude: number | undefined;
   Longitude: number | undefined;
+  Viewport: any;
 
-  constructor(name: string | undefined, address: string | undefined, placeId: string | undefined, latitude: number | undefined, longitude: number |undefined) {
+  constructor(name: string | undefined, address: string | undefined, placeId: string | undefined, latitude: number | undefined, longitude: number |undefined, viewport:any) {
       this.Name = name;
       this.Address = address;
       this.Place_ID = placeId;
       this.Latitude = latitude;
       this.Longitude = longitude;
+      this.Viewport = viewport
   }
 
   // Method to display information about the place
