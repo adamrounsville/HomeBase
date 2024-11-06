@@ -18,6 +18,7 @@ export default function Home() {
     new ActivityGroup("group-id-3", "Resturants", []),
   ]);
   const [openGroup, setOpenGroup] = useState<string | null>(null);
+  const [selectedActivity, setSelectedActivity] = useState<number | null>(null);
   
   return (
     <div>
@@ -43,8 +44,10 @@ export default function Home() {
                 <ActivitySelector 
                 activityGroups={activityGroups} 
                 openGroup = {openGroup} 
+                selectedActivity={selectedActivity}
                 setActivityGroups={setActivityGroups} 
                 setOpenGroup={setOpenGroup}
+                setSelectedActivity = {setSelectedActivity}
                 />
               </aside>
 
@@ -54,6 +57,7 @@ export default function Home() {
                 homebaseLocation= {homebaseLocation} 
                 openGroup={openGroup}
                 activityGroups={activityGroups} 
+                selectedActivity={selectedActivity}
                 setActivityGroups={setActivityGroups}
                 setOpenGroup={setOpenGroup}
                 />

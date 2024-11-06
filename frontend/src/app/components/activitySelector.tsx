@@ -23,39 +23,23 @@ import { Props } from "next/script";
 interface props {
   activityGroups: ActivityGroup[];
   openGroup: string | null;
+  selectedActivity: number | null;
   setActivityGroups: (activityGroups: ActivityGroup[]) => void;
   setOpenGroup: (group: any) => void;
+  setSelectedActivity: (activityId:number) => void;
   
 }
 
-const ActivitySelector = ({ activityGroups, openGroup, setActivityGroups, setOpenGroup }: props) => {
+const ActivitySelector = ({ activityGroups, openGroup, selectedActivity, setActivityGroups, setOpenGroup, setSelectedActivity}: props) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   // State to track new activity input
   const [newActivityTitle, setNewActivityTitle] = useState("");
 
-  // // State to track the currently open group
-  // const [openGroup, setOpenGroup] = useState<string | null>(null);
-
   // Function to toggle group dropdown
   const toggleGroup = (id: string) => {
     setOpenGroup((prevOpenGroup: string) => (prevOpenGroup === id ? null : id));
   };
-
-  // Old functionality unsure if we will need to refactor to this old version later on so keep for now ??
-  // // Function to handle adding new activity group
-  // const handleAddActivity = () => {
-  //   if (newActivityTitle.trim()) {
-  //     const newItem = new ActivityGroup(
-  //       `group-${activityGroups.length + 1}`,
-  //       newActivityTitle,
-  //       []
-  //     );
-  //     setActivityGroups([...activityGroups, newItem]);
-  //     setNewActivityTitle("");
-  //     setIsDialogOpen(false);
-  //   }
-  // };
 
   // Function to handle adding a new activity group
   const handleAddActivity = () => {
@@ -71,6 +55,12 @@ const ActivitySelector = ({ activityGroups, openGroup, setActivityGroups, setOpe
       setIsDialogOpen(false);
     }
   };
+
+  const handleSelectActivity = (index: number) =>{
+    if(index != selectedActivity){
+      setSelectedActivity(index);
+    }
+  }
 
   // Function to handle removing an activity group
   const handleRemoveActivityGroup = (groupId: string) => {
@@ -146,6 +136,7 @@ const ActivitySelector = ({ activityGroups, openGroup, setActivityGroups, setOpe
                   <div
                     key={index}
                     className="activity-item relative bg-gray-100 border border-gray-300 p-4 rounded-lg shadow-sm"
+                    onClick={() => handleSelectActivity(index)}
                   >
                     <div className="flex justify-between items-center">
                       <span className="text-xl font-semibold text-gray-800">

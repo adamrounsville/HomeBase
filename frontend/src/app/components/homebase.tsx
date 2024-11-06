@@ -30,13 +30,15 @@ const Homebase = ({onHomebaseSelect: onHomebaseSelect, homebaseLocation}: Props)
     }, []);
 
     const handleSave = () => {
-        if(homebaseLocation?.formatted_address && homebaseLocation?.geometry?.location){
-            localStorage.setItem('homebaseLocation', homebaseLocation?.formatted_address);
-            const latitude = homebaseLocation.geometry.location.lat();
-            const longitude = homebaseLocation.geometry.location.lng();
+        if(homebaseLocation){
+            localStorage.setItem('homebaseLocation', homebaseLocation.formatted_address!);
+            const latitude = homebaseLocation.geometry!.location!.lat();
+            const longitude = homebaseLocation.geometry!.location!.lng();
             localStorage.setItem('homebasePositionLat', latitude.toString());
             localStorage.setItem('homebasePositionLng', longitude.toString());
-            setHomebaseAddress(homebaseLocation?.formatted_address);
+            localStorage.setItem('homebaseName', homebaseLocation.name!);
+            localStorage.setItem('homebaseID', homebaseLocation.place_id!);
+            setHomebaseAddress(homebaseLocation?.formatted_address!);
         }
         
     };
