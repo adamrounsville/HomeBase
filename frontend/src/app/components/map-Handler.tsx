@@ -3,7 +3,6 @@ import {useMap} from '@vis.gl/react-google-maps';
 import React, {useEffect} from 'react';
 
 interface Props {
-    // place_result?: google.maps.places.PlaceResult | null;
     place: Place | null;
 }
 

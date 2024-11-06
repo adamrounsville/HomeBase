@@ -5,24 +5,28 @@ import SearchBar from "./components/search";
 import NavBar from "./components/navbar";
 import ActivitySelector from "./components/activitySelector";
 import Homebase from "./components/homebase";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { APIProvider } from "@vis.gl/react-google-maps";
 import { ActivityGroup, Place } from "@/lib/utils";
 
 export default function Home() {
   const [homebaseLocation, setHomebaseLocation] = useState<Place | null>(null);
-  const [selectedPlace, setSelectedPlace] = useState<google.maps.places.PlaceResult | null>(null);
+  const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
   const [activityGroups, setActivityGroups] = useState([
     new ActivityGroup("group-id-1", "Snorkelling", []),
     new ActivityGroup("group-id-2", "Beaches", []),
     new ActivityGroup("group-id-3", "Resturants", []),
   ]);
   const [openGroup, setOpenGroup] = useState<string | null>(null);
-  const [selectedActivity, setSelectedActivity] = useState<number | null>(null);
-  const [homebaseLocationInfo, setHomebaseLocationInfo] = useState<Place>(new Place("LOCATION", "ADDY", "ID", 0, 0, undefined));
+  const [selectedActivity, setSelectedActivity] = useState<number | null>(100);
   const [focusHomebase, setFocusHomebase] = useState(false);
+  const [focusSelectedLocation, setFocusSelectedLocation] = useState<Place | undefined>();
 
-  useEffect(() => {
+  const prevHomebaseLocation = useRef(homebaseLocation);
+  const prevSelectedPlace = useRef(selectedPlace);
+  const prevSelectedActivity = useRef(selectedActivity);
+
+   useEffect(() => {
     if(localStorage.getItem('homebasePositionLng') && localStorage.getItem('homebasePositionLat')){
       const name  =localStorage?.getItem('homebaseName');
       const location = localStorage.getItem('homebaseLocation');
@@ -34,8 +38,33 @@ export default function Home() {
       const place = new Place(name!, location!, placeID!, lat, lng , viewportObj)
       setHomebaseLocation(place)
     }
-  }, [homebaseLocation]);
+  }, []);
 
+  useEffect(()=>{
+    if (homebaseLocation !== prevHomebaseLocation.current) {
+      // homebaseLocation has changed
+      setFocusSelectedLocation(homebaseLocation!);
+    } else if (selectedPlace !== prevSelectedPlace.current) {
+      // selectedPlace has changed
+        setFocusSelectedLocation(selectedPlace!);
+    }
+    else if (selectedActivity !== prevSelectedActivity.current){
+      const selectedGroup  = activityGroups.find((group) => group.id === openGroup);
+      const activity = selectedGroup?.activities.at(selectedActivity!)
+      if(activity){
+        setFocusSelectedLocation(activity);
+        setSelectedActivity(20);
+      }
+    }
+    else if (focusHomebase){
+      setFocusSelectedLocation(homebaseLocation!)
+      setFocusHomebase(false);
+    }
+    // Update refs to current values for next comparison
+    prevHomebaseLocation.current = homebaseLocation;
+    prevSelectedPlace.current = selectedPlace;
+    prevSelectedActivity.current = selectedActivity;
+  }),[homebaseLocation, selectedPlace, selectedActivity, focusHomebase]
   
   return (
     <div>
@@ -75,10 +104,9 @@ export default function Home() {
                 homebaseLocation= {homebaseLocation} 
                 openGroup={openGroup}
                 activityGroups={activityGroups} 
-                selectedActivity={selectedActivity}
-                homebaseFocus = {focusHomebase}
-                setFocusHomebase ={setFocusHomebase}
+                focusSelectedLocation={focusSelectedLocation}
                 setActivityGroups={setActivityGroups}
+                setSelectedActivity={setSelectedActivity}
                 />
               </section>
 

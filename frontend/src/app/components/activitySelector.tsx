@@ -18,8 +18,8 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
-import { ActivityGroup, Place } from "@/lib/utils";
-import { Props } from "next/script";
+import { ActivityGroup } from "@/lib/utils";
+
 interface props {
   activityGroups: ActivityGroup[];
   openGroup: string | null;
@@ -111,7 +111,7 @@ const ActivitySelector = ({ activityGroups, openGroup, selectedActivity, setActi
 
       <div className="activity-list">
         {activityGroups.map((group) => (
-          <div key={group.id} className="activity-group">
+          <div key={group.id} className="activity-group duration-200 ease-in-out hover:shadow-lg hover:scale-105">
             <div className="group-header" onClick={() => toggleGroup(group.id)}>
               <span className="group-title">{group.title}</span>
               <DropdownMenu>
@@ -135,7 +135,7 @@ const ActivitySelector = ({ activityGroups, openGroup, selectedActivity, setActi
                 {group.activities.map((activity, index) => (
                   <div
                     key={index}
-                    className="activity-item relative bg-gray-100 border border-gray-300 p-4 rounded-lg shadow-sm"
+                    className="activity-item relative bg-gray-100 border border-gray-300 p-4 rounded-lg shadow-sm duration-200 ease-in-out hover:bg-gray-200 hover:shadow-lg hover:scale-105"
                     onClick={() => handleSelectActivity(index)}
                   >
                     <div className="flex justify-between items-center">
