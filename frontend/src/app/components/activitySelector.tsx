@@ -19,43 +19,30 @@ import {
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { ActivityGroup, Place } from "@/lib/utils";
-import { Props } from "next/script";
-interface props {
+
+interface Props {
   activityGroups: ActivityGroup[];
   openGroup: string | null;
   setActivityGroups: (activityGroups: ActivityGroup[]) => void;
+  addToDailyPlan: (activity: Place) => void; // New prop
   setOpenGroup: (group: any) => void;
-  
 }
 
-const ActivitySelector = ({ activityGroups, openGroup, setActivityGroups, setOpenGroup }: props) => {
+const ActivitySelector = ({
+  activityGroups,
+  setActivityGroups,
+  addToDailyPlan,
+  openGroup,
+  setOpenGroup,
+}: Props) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-
-  // State to track new activity input
   const [newActivityTitle, setNewActivityTitle] = useState("");
-
-  // // State to track the currently open group
-  // const [openGroup, setOpenGroup] = useState<string | null>(null);
+  //const [openGroup, setOpenGroup] = useState<string | null>(null);
 
   // Function to toggle group dropdown
   const toggleGroup = (id: string) => {
     setOpenGroup((prevOpenGroup: string) => (prevOpenGroup === id ? null : id));
   };
-
-  // Old functionality unsure if we will need to refactor to this old version later on so keep for now ??
-  // // Function to handle adding new activity group
-  // const handleAddActivity = () => {
-  //   if (newActivityTitle.trim()) {
-  //     const newItem = new ActivityGroup(
-  //       `group-${activityGroups.length + 1}`,
-  //       newActivityTitle,
-  //       []
-  //     );
-  //     setActivityGroups([...activityGroups, newItem]);
-  //     setNewActivityTitle("");
-  //     setIsDialogOpen(false);
-  //   }
-  // };
 
   // Function to handle adding a new activity group
   const handleAddActivity = () => {
@@ -65,7 +52,6 @@ const ActivitySelector = ({ activityGroups, openGroup, setActivityGroups, setOpe
         newActivityTitle,
         []
       );
-      // Ensure newItem is an instance of ActivityGroup
       setActivityGroups([...activityGroups, newItem]);
       setNewActivityTitle("");
       setIsDialogOpen(false);
@@ -91,6 +77,7 @@ const ActivitySelector = ({ activityGroups, openGroup, setActivityGroups, setOpe
       )
     );
   };
+
   return (
     <>
       <div className="activity-selector-header">
@@ -135,7 +122,7 @@ const ActivitySelector = ({ activityGroups, openGroup, setActivityGroups, setOpe
                     Delete Group
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem>Add to Map</DropdownMenuItem>
+                  <DropdownMenuItem>Open / Close</DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
@@ -164,7 +151,11 @@ const ActivitySelector = ({ activityGroups, openGroup, setActivityGroups, setOpe
                             Remove
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
-                          <DropdownMenuItem>Add To Daily Plan</DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={() => addToDailyPlan(activity)}
+                          >
+                            Add To Daily Plan
+                          </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </div>
@@ -181,4 +172,5 @@ const ActivitySelector = ({ activityGroups, openGroup, setActivityGroups, setOpe
     </>
   );
 };
+
 export default ActivitySelector;
