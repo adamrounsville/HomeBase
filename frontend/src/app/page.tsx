@@ -45,6 +45,8 @@ export default function Home() {
     }
   };
 
+  const [openGroup, setOpenGroup] = useState<string | null>(null);
+
   return (
     <div>
       <NavBar />
@@ -66,7 +68,10 @@ export default function Home() {
                   setActivityGroups={setActivityGroups}
                   addToDailyPlan={(activity) =>
                     addToDailyPlan(activity, "Day 1")
-                  } // Example for Day 1
+                  }
+                  // Example for Day 1
+                  openGroup={openGroup}
+                  setOpenGroup={setOpenGroup}
                 />
               </aside>
 
@@ -74,8 +79,10 @@ export default function Home() {
                 <GoogleMapComponent
                   selectedPlace={selectedPlace}
                   homebaseLocation={homebaseLocation}
+                  openGroup={openGroup}
                   activityGroups={activityGroups}
                   setActivityGroups={setActivityGroups}
+                  setOpenGroup={setOpenGroup}
                 />
               </section>
 

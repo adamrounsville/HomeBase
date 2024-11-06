@@ -22,22 +22,26 @@ import { ActivityGroup, Place } from "@/lib/utils";
 
 interface Props {
   activityGroups: ActivityGroup[];
+  openGroup: string | null;
   setActivityGroups: (activityGroups: ActivityGroup[]) => void;
   addToDailyPlan: (activity: Place) => void; // New prop
+  setOpenGroup: (group: any) => void;
 }
 
 const ActivitySelector = ({
   activityGroups,
   setActivityGroups,
   addToDailyPlan,
+  openGroup,
+  setOpenGroup,
 }: Props) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [newActivityTitle, setNewActivityTitle] = useState("");
-  const [openGroup, setOpenGroup] = useState<string | null>(null);
+  //const [openGroup, setOpenGroup] = useState<string | null>(null);
 
   // Function to toggle group dropdown
   const toggleGroup = (id: string) => {
-    setOpenGroup((prevOpenGroup) => (prevOpenGroup === id ? null : id));
+    setOpenGroup((prevOpenGroup: string) => (prevOpenGroup === id ? null : id));
   };
 
   // Function to handle adding a new activity group
