@@ -27,7 +27,7 @@ gmaps = googlemaps.Client(key=os.getenv("GOOGLE_MAPS_API_KEY"))
 app = FastAPI()
 app.add_middleware(CORSMiddleware, **CORS_CONFIG)
 
-@app.post("/place/add")
+@app.post("/place")
 def add_place(user_id: Annotated[str, Body()], place_name: Annotated[str, Body()], activity_group: Annotated[str, Body()]):
     """
     Takes in a user ID, location name, and activity group from the frontend, adds a Place made with information from
@@ -58,7 +58,7 @@ def add_place(user_id: Annotated[str, Body()], place_name: Annotated[str, Body()
 
     return { "place": Place(name=name, ID=place_id, latitude=latitude, longitude=longitude) }
 
-@app.get("/place/get")
+@app.get("/place")
 def get_place(user_id: str, place_name: str):
     """
     Takes in a user ID and a location name from the frontend, returns a Place object with information from the user's places
@@ -74,7 +74,7 @@ def get_place(user_id: str, place_name: str):
 
     return { "place": place }
 
-@app.delete("/place/delete")
+@app.delete("/place")
 def delete_place(user_id: Annotated[str, Body()], activity_group: Annotated[str, Body()], place_id: Annotated[str, Body()]):
     """
     Takes in a user ID, location name, and activity group from the frontend, deletes the place from the user's places
@@ -89,7 +89,7 @@ def delete_place(user_id: Annotated[str, Body()], activity_group: Annotated[str,
 
     return { "message" : "success" }
 
-@app.post("/activity-group/add")
+@app.post("/activity-group")
 def add_activity_group(user_id: Annotated[str, Body()], activity_group: Annotated[str, Body()]):
     """
     Takes in a user ID and an activity group name from the frontend, adds the activity group to the user's places
@@ -101,7 +101,7 @@ def add_activity_group(user_id: Annotated[str, Body()], activity_group: Annotate
 
     return { "message" : "success" }
 
-@app.get("/activity-group/get")
+@app.get("/activity-group")
 def get_activity_group(user_id: Annotated[str, Body()], activity_group: Annotated[str, Body()]):
     """
     Takes in a user ID and an activity group name from the frontend, returns the activity group from the user's places
@@ -113,7 +113,7 @@ def get_activity_group(user_id: Annotated[str, Body()], activity_group: Annotate
 
     return { "places" : places }
 
-@app.delete("/activity-group/delete")
+@app.delete("/activity-group")
 def delete_activity_group(user_id: Annotated[str, Body()], activity_group: Annotated[str, Body()]):
     """
     Takes in a user ID and an activity group name from the frontend, deletes the activity group from the user's places
@@ -131,9 +131,7 @@ def set_homebase(address: Annotated[str, Body()]):
     Takes in a address from the frontend, sets the information for use in the backend, and 
     returns the UUID associated with the user.
     """
-    print(address)
     geocode_result = gmaps.geocode(address)
-    print(geocode_result)
 
     lat = geocode_result[0]['geometry']['location']['lat']
     lng = geocode_result[0]['geometry']['location']['lng']
@@ -149,3 +147,37 @@ def get_route():
     from Google API (format pending)
     """
     pass
+
+@app.get("/users")
+def get_users():
+    """
+    Returns a list of all users in the database with their homebase locations
+    """
+    users = []
+    for user_id, user_info in db.data.items():
+        users.append({
+            "user_id": user_id,
+            "homebase": {
+                "latitude": user_info.home[0],
+                "longitude": user_info.home[1]
+            }
+        })
+    
+    return { "users": users }
+
+@app.get("/data/{uuid}")
+def get_user_data():
+    """
+    Returns a list of all users in the database with their homebase locations
+    """
+    users = []
+    for user_id, user_info in db.data.items():
+        users.append({
+            "user_id": user_id,
+            "homebase": {
+                "latitude": user_info.home[0],
+                "longitude": user_info.home[1]
+            }
+        })
+    
+    return { "users": users }
