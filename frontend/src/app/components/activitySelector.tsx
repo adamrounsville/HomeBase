@@ -27,11 +27,10 @@ interface props {
   setActivityGroups: (activityGroups: ActivityGroup[]) => void;
   addToDailyPlan: (activity: Place) => void; // New prop
   setOpenGroup: (group: any) => void;
-  setSelectedActivity: (activityId:number) => void;
-  
+  setSelectedActivity: (activityId: number) => void;
 }
 
-const ActivitySelector = ({ activityGroups, openGroup, addToDailyPlan,selectedActivity, setActivityGroups, setOpenGroup, setSelectedActivity}: props) => {
+const ActivitySelector = ({ activityGroups, openGroup, addToDailyPlan, selectedActivity, setActivityGroups, setOpenGroup, setSelectedActivity }: props) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [newActivityTitle, setNewActivityTitle] = useState("");
 
@@ -54,8 +53,8 @@ const ActivitySelector = ({ activityGroups, openGroup, addToDailyPlan,selectedAc
     }
   };
 
-  const handleSelectActivity = (index: number) =>{
-    if(index != selectedActivity){
+  const handleSelectActivity = (index: number) => {
+    if (index != selectedActivity) {
       setSelectedActivity(index);
     }
   }
@@ -71,10 +70,10 @@ const ActivitySelector = ({ activityGroups, openGroup, addToDailyPlan,selectedAc
       activityGroups.map((group) =>
         group.id === groupId
           ? new ActivityGroup(
-              group.id,
-              group.title,
-              group.activities.filter((_, index) => index !== activityIndex)
-            )
+            group.id,
+            group.title,
+            group.activities.filter((_, index) => index !== activityIndex)
+          )
           : group
       )
     );
@@ -139,7 +138,7 @@ const ActivitySelector = ({ activityGroups, openGroup, addToDailyPlan,selectedAc
                   >
                     <div className="flex justify-between items-center">
                       <span className="text-xl font-semibold text-gray-800">
-                        {activity.Name}
+                        {activity.name}
                       </span>
                       <DropdownMenu>
                         <DropdownMenuTrigger>
@@ -163,7 +162,7 @@ const ActivitySelector = ({ activityGroups, openGroup, addToDailyPlan,selectedAc
                       </DropdownMenu>
                     </div>
                     <h1 className="text-sm text-gray-600 mb-4">
-                      {activity.Address}
+                      {activity.address}
                     </h1>
                   </div>
                 ))}

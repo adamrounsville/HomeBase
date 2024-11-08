@@ -34,7 +34,7 @@ export default function Home() {
     selectedDate: "Day 1" | "Day 2" | "Day 3"
   ) => {
     if (
-      !dailyPlans[selectedDate].some((a) => a.Place_ID === activity.Place_ID)
+      !dailyPlans[selectedDate].some((a) => a.placeId === activity.placeId)
     ) {
       setDailyPlans((prevDailyPlans) => ({
         ...prevDailyPlans,

@@ -30,7 +30,7 @@ const DailyActivities = ({
   // Add activity to the selected date's daily plan
   const addToDailyPlan = (activity: Place) => {
     if (
-      !dailyPlans[selectedDate].some((a) => a.Place_ID === activity.Place_ID)
+      !dailyPlans[selectedDate].some((a) => a.placeId === activity.placeId)
     ) {
       setDailyPlans({
         ...dailyPlans,
@@ -44,7 +44,7 @@ const DailyActivities = ({
   const removeFromDailyPlan = (date: Day, activityId: string) => {
     setDailyPlans({
       ...dailyPlans,
-      [date]: dailyPlans[date].filter((a) => a.Place_ID !== activityId),
+      [date]: dailyPlans[date].filter((a) => a.placeId !== activityId),
     });
   };
 
@@ -59,9 +59,8 @@ const DailyActivities = ({
             key={day}
             variant={selectedDate === day ? "default" : "outline"}
             onClick={() => setSelectedDate(day)}
-            className={`flex-1 ${
-              selectedDate === day ? "bg-blue-500 text-white" : "text-blue-500"
-            }`}
+            className={`flex-1 ${selectedDate === day ? "bg-blue-500 text-white" : "text-blue-500"
+              }`}
           >
             {day}
           </Button>
@@ -73,18 +72,18 @@ const DailyActivities = ({
         {dailyPlans[selectedDate].length > 0 ? (
           dailyPlans[selectedDate].map((activity) => (
             <div
-              key={activity.Place_ID}
+              key={activity.placeId}
               className="daily-plan-item bg-white shadow-sm rounded-lg p-4 mb-2 "
             >
               <h3 className="text-lg font-medium text-gray-800">
-                {activity.Name}
+                {activity.name}
               </h3>
-              <p className="text-sm text-gray-600">{activity.Address}</p>
+              <p className="text-sm text-gray-600">{activity.address}</p>
 
               <button
                 className="text-red-500 text-sm hover:underline mt-2"
                 onClick={() =>
-                  removeFromDailyPlan(selectedDate, activity.Place_ID!)
+                  removeFromDailyPlan(selectedDate, activity.placeId!)
                 }
               >
                 Remove
@@ -120,14 +119,14 @@ const DailyActivities = ({
                 {group.activities.length > 0 ? (
                   group.activities.map((activity) => (
                     <div
-                      key={activity.Place_ID}
+                      key={activity.placeId}
                       className="activity-item p-3 bg-gray-200 rounded-lg mt-2 transition-shadow hover:shadow-lg"
                     >
                       <h5 className="text-sm font-medium text-gray-800">
-                        {activity.Name}
+                        {activity.name}
                       </h5>
                       <p className="text-xs text-gray-600">
-                        {activity.Address}
+                        {activity.address}
                       </p>
                       <Button
                         className="mt-2 bg-blue-500 text-white hover:bg-blue-600"
