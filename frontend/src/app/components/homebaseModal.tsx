@@ -2,6 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Place } from '@/lib/utils';
 import { useMapsLibrary } from '@vis.gl/react-google-maps';
 import React, { useEffect, useRef, useState } from 'react';
 
@@ -9,12 +10,11 @@ interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: (address: string) => void;
-  onPlaceSelect: (place: google.maps.places.PlaceResult | null) => void;
+  onPlaceSelect: (place: Place | null) => void;
 }
 
 const HomeBaseLocationModal: React.FC<ModalProps> = ({ isOpen, onClose, onSave, onPlaceSelect }) => {
   const [address, setAddress] = useState<string>('');
-  const [selectedPlace, setSelectedPlace] = useState<google.maps.places.PlaceResult | null>(null);
   const [placeAutocomplete, setPlaceAutocomplete] = useState<google.maps.places.Autocomplete | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -22,25 +22,25 @@ const HomeBaseLocationModal: React.FC<ModalProps> = ({ isOpen, onClose, onSave, 
   const places = useMapsLibrary('places');
 
   const handleSave = async () => {
-    if (!selectedPlace?.formatted_address) {
+    if (!address) {
       console.error('No valid address selected');
       return;
     }
 
-    if (localStorage.getItem('homebaseLocation') !== selectedPlace.formatted_address) {
+    if (localStorage.getItem('homebaseLocation') !== address) {
       try {
         setIsLoading(true);
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/homebase`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(selectedPlace.formatted_address),
+          body: JSON.stringify(address),
         });
 
         if (!response.ok) throw new Error('Failed to save address');
 
         const data = await response.json();
         localStorage.setItem('userId', data.uuid);
-        onSave(selectedPlace.formatted_address);
+        onSave(address);
       } catch (error) {
         console.error('Error saving address:', error);
       } finally {
@@ -66,12 +66,10 @@ const HomeBaseLocationModal: React.FC<ModalProps> = ({ isOpen, onClose, onSave, 
     if (!placeAutocomplete) return;
 
     placeAutocomplete.addListener('place_changed', () => {
-      const place = placeAutocomplete.getPlace();
-      setSelectedPlace(place);
+      const autocomplete_place = placeAutocomplete.getPlace()
+      const place = new Place(autocomplete_place.name, autocomplete_place.formatted_address, autocomplete_place.place_id, autocomplete_place.geometry?.location?.lat(), autocomplete_place.geometry?.location?.lng(), autocomplete_place.geometry?.viewport)
       onPlaceSelect(place);
-      if (place.formatted_address) {
-        setAddress(place.formatted_address);
-      }
+      setAddress(autocomplete_place.formatted_address || '');
     });
   }, [onPlaceSelect, placeAutocomplete]);
 

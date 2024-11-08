@@ -20,24 +20,20 @@ import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { ActivityGroup, Place } from "@/lib/utils";
 
-interface Props {
+interface props {
   activityGroups: ActivityGroup[];
   openGroup: string | null;
+  selectedActivity: number | null;
   setActivityGroups: (activityGroups: ActivityGroup[]) => void;
   addToDailyPlan: (activity: Place) => void; // New prop
   setOpenGroup: (group: any) => void;
+  setSelectedActivity: (activityId:number) => void;
+  
 }
 
-const ActivitySelector = ({
-  activityGroups,
-  setActivityGroups,
-  addToDailyPlan,
-  openGroup,
-  setOpenGroup,
-}: Props) => {
+const ActivitySelector = ({ activityGroups, openGroup, addToDailyPlan,selectedActivity, setActivityGroups, setOpenGroup, setSelectedActivity}: props) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [newActivityTitle, setNewActivityTitle] = useState("");
-  //const [openGroup, setOpenGroup] = useState<string | null>(null);
 
   // Function to toggle group dropdown
   const toggleGroup = (id: string) => {
@@ -57,6 +53,12 @@ const ActivitySelector = ({
       setIsDialogOpen(false);
     }
   };
+
+  const handleSelectActivity = (index: number) =>{
+    if(index != selectedActivity){
+      setSelectedActivity(index);
+    }
+  }
 
   // Function to handle removing an activity group
   const handleRemoveActivityGroup = (groupId: string) => {
@@ -108,7 +110,7 @@ const ActivitySelector = ({
 
       <div className="activity-list">
         {activityGroups.map((group) => (
-          <div key={group.id} className="activity-group">
+          <div key={group.id} className="activity-group duration-200 ease-in-out hover:shadow-lg hover:scale-105">
             <div className="group-header" onClick={() => toggleGroup(group.id)}>
               <span className="group-title">{group.title}</span>
               <DropdownMenu>
@@ -132,7 +134,8 @@ const ActivitySelector = ({
                 {group.activities.map((activity, index) => (
                   <div
                     key={index}
-                    className="activity-item relative bg-gray-100 border border-gray-300 p-4 rounded-lg shadow-sm"
+                    className="activity-item relative bg-gray-100 border border-gray-300 p-4 rounded-lg shadow-sm duration-200 ease-in-out hover:bg-gray-200 hover:shadow-lg hover:scale-105"
+                    onClick={() => handleSelectActivity(index)}
                   >
                     <div className="flex justify-between items-center">
                       <span className="text-xl font-semibold text-gray-800">

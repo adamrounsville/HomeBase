@@ -8,10 +8,9 @@ import {
   useAdvancedMarkerRef,
 } from "@vis.gl/react-google-maps";
 import MapHandler from "./map-Handler";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { getData } from "./data";
+import { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import {
   Select,
   SelectContent,
@@ -21,25 +20,32 @@ import {
 } from "@/components/ui/select";
 import { ActivityGroup, Place } from "@/lib/utils";
 interface Props {
-  selectedPlace: google.maps.places.PlaceResult | null;
-  homebaseLocation: google.maps.places.PlaceResult | null;
+  selectedPlace: Place | null;
+  homebaseLocation: Place | null;
   openGroup: string | null;
   activityGroups: ActivityGroup[];
+  focusSelectedLocation: Place | undefined;
   setActivityGroups: (activityGroups: ActivityGroup[]) => void;
-  setOpenGroup: (group: any) => void;
+  setSelectedActivity:(activity: number) => void;
+  
 }
 
-// This is to load in marker Fake Data
-const data = getData()
-  .sort((a, b) => b.position.lat - a.position.lat)
-  .map((dataItem, index) => ({ ...dataItem, zIndex: index }));
-
-const GoogleMapComponent = ({selectedPlace, homebaseLocation, openGroup, activityGroups, setActivityGroups, setOpenGroup}: Props) => {  
+const GoogleMapComponent = ({
+    selectedPlace, 
+    homebaseLocation, 
+    openGroup, 
+    activityGroups,
+    focusSelectedLocation, 
+    setActivityGroups, 
+    setSelectedActivity
+}: Props) => {  
   
+  // const [focusSelectedLocation, setFocusSelectedLocation] = useState<Place | undefined>();
   const [displayMarkers, setDisplayMarkers] = useState<Place[] | undefined>();
   // This is the latitude and longitude that is returned from the search and set to display the search marker
 
-  const [position, setPosition] = useState<{lat: number, lng: number} | undefined>({lat:  40.233845, lng: -111.658531});
+  const [position, setPosition] = useState<{lat: number, lng: number} | undefined>();
+
   const [homebasePosition, setHomebasePosition] = useState<{lat: number, lng: number} | undefined>();
   //These are the markers selected and if the marker is a search location or activity group 
   const [selectedMarker, setSelectedMarker] = useState<google.maps.marker.AdvancedMarkerElement | null>(null);
@@ -47,6 +53,7 @@ const GoogleMapComponent = ({selectedPlace, homebaseLocation, openGroup, activit
   const [infoWindowShown, setInfoWindowShown] = useState(false);
   const [isSearchLocation, setSearchLocation] = useState(false);
 
+  const [selectedLocation, setSelectedLocation] = useState<Place>();
   // Change Hover components
   const onMouseEnter = useCallback((id: string | null) => setHoverId(id), []);
   const onMouseLeave = useCallback(() => setHoverId(null), []);
@@ -54,7 +61,6 @@ const GoogleMapComponent = ({selectedPlace, homebaseLocation, openGroup, activit
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const placeMarkers = true;
-
   // For the AddToActivityGroup Modal, sets if its open and which activity group is selected
   // for the select
   const [isModalOpen, setModalOpen] = useState(false); // Modal state
@@ -64,35 +70,21 @@ const GoogleMapComponent = ({selectedPlace, homebaseLocation, openGroup, activit
 
   // This handles the search marker's click
   const handleMarkerClick = (
-    marker: google.maps.marker.AdvancedMarkerElement
+    marker: google.maps.marker.AdvancedMarkerElement,
+    place?: Place
   ) => {
-    
+    if (place){
+      setSelectedLocation(place)
+      setSearchLocation(false);
+    }
+    else{
+      setSearchLocation(true);
+    }
+   
     setInfoWindowShown(true);
     setSelectedMarker(marker);
-    setSearchLocation(true);
   };
 
-  // This will handle the Activity Group Markers
-  const onMarkerClick = useCallback(
-    (id: string | null, marker?: google.maps.marker.AdvancedMarkerElement) => {
-      setSelectedId(id);
-      console.log(selectedPlace?.formatted_address);
-      console.log(selectedPlace?.address_components);
-      console.log("end test");
-
-      if (marker) {
-        setSelectedMarker(marker);
-        setSearchLocation(false);
-      }
-
-      if (id !== selectedId) {
-        setInfoWindowShown(true);
-      } else {
-        setInfoWindowShown((isShown) => !isShown);
-      }
-    },
-    [selectedId]
-  );
   const onAddToActivityGroupClick = () => {
     setModalOpen(true);
   };
@@ -102,23 +94,18 @@ const GoogleMapComponent = ({selectedPlace, homebaseLocation, openGroup, activit
     const group = activityGroups.find((g) => g.id === selectedActivityGroup);
     // Make a new Place Object and add it to the ActivityGroup
     if (group && selectedPlace) {
-      const newPlace: Place = new Place(
-        selectedPlace.name,
-        selectedPlace.formatted_address,
-        selectedPlace.place_id,
-        selectedPlace.geometry?.location?.lat(),
-        selectedPlace.geometry?.location?.lng()
-      );
-      group?.addActivity(newPlace);
+      group?.addActivity(selectedPlace);
       setActivityGroups([...activityGroups]); // Update the activity groups
       setModalOpen(false);
     }
   };
+
   // Handles when map is clicked
   const onMapClick = useCallback(() => {
     setSelectedId(null);
     setSelectedMarker(null);
     setInfoWindowShown(false);
+    setSelectedActivity(100);
   }, []);
 
   //Closes the Info Window
@@ -128,38 +115,36 @@ const GoogleMapComponent = ({selectedPlace, homebaseLocation, openGroup, activit
   );
   // When the selected place changes, this computes the lat and longitude that is set
   useEffect(() => {
-    if (selectedPlace?.geometry?.location) {
-      const latitude = selectedPlace.geometry.location.lat();
-      const longitude = selectedPlace.geometry.location.lng();
+    if (selectedPlace) {
+      const latitude = selectedPlace.Latitude!;
+      const longitude = selectedPlace.Longitude!;
+      setInfoWindowShown(false);
       setPosition({ lat: latitude, lng: longitude });
+      
     }
   }, [selectedPlace]);
 
 
   useEffect(() => {
-    if (homebaseLocation?.geometry?.location) {
-      const latitude = homebaseLocation.geometry.location.lat();
-      const longitude = homebaseLocation.geometry.location.lng();
+    if (homebaseLocation) {
+      const latitude = homebaseLocation.Latitude!;
+      const longitude = homebaseLocation.Longitude!;
+      setInfoWindowShown(false);
       setHomebasePosition({ lat: latitude, lng: longitude });
     }
-    
   }, [homebaseLocation]);
 
   useEffect(() => {
     const storedLatitude = localStorage.getItem('homebasePositionLat');
     const storedLongitude = localStorage.getItem('homebasePositionLng');
     if (storedLatitude && storedLongitude){
+      console.log("Set Homebase Position")
       const latitude = parseFloat(storedLatitude);
       const longitude = parseFloat(storedLongitude);
       setHomebasePosition({lat:latitude, lng: longitude})
     }
   
   }, []);
-  useEffect(() => {
-    if (homebasePosition) {
-      setPosition(homebasePosition);
-    }
-  }, [homebasePosition]);
 
   useEffect(() => {
     if (openGroup) {
@@ -167,23 +152,17 @@ const GoogleMapComponent = ({selectedPlace, homebaseLocation, openGroup, activit
       setDisplayMarkers(selectedGroup?.activities);
     }
     else {
-      setDisplayMarkers(undefined); // clear markers if no group is selected
+      setDisplayMarkers(undefined); 
     }
   }), [openGroup]
   
-  function removeTags(string: string) {
-    return string
-      .replace(/<[^>]*>/g, " ")
-      .replace(/\s{2,}/g, " ")
-      .trim();
-  }
   return (
       <>
         <Map 
-          defaultCenter={position}
+          defaultCenter={position || homebasePosition}
           defaultZoom={10} 
           onClick={onMapClick}
-          clickableIcons={false}
+          clickableIcons={true}
           mapId="HOMEBASE_MAP_ID"
           >
           {displayMarkers && displayMarkers.map((place) => (
@@ -193,7 +172,7 @@ const GoogleMapComponent = ({selectedPlace, homebaseLocation, openGroup, activit
               position={{lat:place.Latitude ?? 0, lng : place.Longitude ?? 0}}
               onMarkerClick={(
                 marker: google.maps.marker.AdvancedMarkerElement
-              ) => handleMarkerClick(marker)}
+              ) => handleMarkerClick(marker, place)}
               onMouseEnter={() => onMouseEnter(place.Place_ID ?? "NO_ID")}
               onMouseLeave={onMouseLeave}
             >
@@ -203,31 +182,34 @@ const GoogleMapComponent = ({selectedPlace, homebaseLocation, openGroup, activit
                glyphColor={selectedId === place.Place_ID ? '#0f677a' : null} 
               />
             </AdvancedMarkerWithRef>
-
           ))}
-
-          <AdvancedMarkerWithRef
-              onMarkerClick={(
-                marker: google.maps.marker.AdvancedMarkerElement
-              ) => handleMarkerClick(marker)}
+          // Homebase Marker
+          {homebaseLocation && (
+            <AdvancedMarkerWithRef
+              key={homebaseLocation.Place_ID}
+              onMarkerClick={(marker) => handleMarkerClick(marker, homebaseLocation)}
               position={homebasePosition}
-          />
-          <AdvancedMarkerWithRef
+            />
+          )}
+          //Search Marker
+            <AdvancedMarkerWithRef
               onMarkerClick={(
                 marker: google.maps.marker.AdvancedMarkerElement
               ) => handleMarkerClick(marker)}
               position={position}
-          />
+            />
+          
+          // Info Window for Search Marker
         {infoWindowShown && selectedMarker && isSearchLocation && (
           <InfoWindow
             anchor={selectedMarker}
             onCloseClick={handleInfowindowCloseClick}
           >
             <h1 className="text-xl font-semibold text-gray-800">
-              {selectedPlace?.name}
+              {selectedPlace?.Name}
             </h1>
             <h1 className="text-sm text-gray-600 mb-4">
-              {selectedPlace?.formatted_address}
+              {selectedPlace?.Address}
             </h1>
 
             <Button onClick={onAddToActivityGroupClick}>
@@ -235,47 +217,53 @@ const GoogleMapComponent = ({selectedPlace, homebaseLocation, openGroup, activit
             </Button>
           </InfoWindow>
         )}
+        // Info Window for Other Markers (Homebase, Activity Groups)
         {infoWindowShown && selectedMarker && !isSearchLocation && (
           <InfoWindow
             anchor={selectedMarker}
             onCloseClick={handleInfowindowCloseClick}
           >
-            <h2>Marker {selectedId}</h2>
-            <p>Some location information</p>
+            <h1 className="text-xl font-semibold text-gray-800">
+              {selectedLocation?.Name}
+            </h1>
+            <h1 className="text-sm text-gray-600 mb-4">
+              {selectedLocation?.Address}
+            </h1>
           </InfoWindow>
         )}
       </Map>
-
+      
       {isModalOpen && (
         <Dialog
           open={isModalOpen}
           onOpenChange={(isOpen) => setModalOpen(isOpen)}
         >
-
           <DialogContent>
-            <h2>Select an Activity Group</h2>
-            <Select
-              value={selectedActivityGroup}
-              onValueChange={(value) => setSelectedActivityGroup(value)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select Activity Group" />
-              </SelectTrigger>
-              <SelectContent>
-                {activityGroups.map((group) => (
-                  <SelectItem key={group.id} value={group.id}>
-                    {group.title}
-                  </SelectItem>
-                ))}
-                </SelectContent>
-              </Select>
-              <Button onClick={handleAddToGroup}>
-                Add
-              </Button>
-            </DialogContent>
+            <DialogHeader>
+              <DialogTitle>Add To Activity Group</DialogTitle>
+            </DialogHeader>
+              <Select
+                value={selectedActivityGroup}
+                onValueChange={(value) => setSelectedActivityGroup(value)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Activity Group" />
+                </SelectTrigger>
+                <SelectContent>
+                  {activityGroups.map((group) => (
+                    <SelectItem key={group.id} value={group.id}>
+                      {group.title}
+                    </SelectItem>
+                  ))}
+                  </SelectContent>
+                </Select>
+                <Button onClick={handleAddToGroup}>
+                  Add
+                </Button>
+              </DialogContent>
           </Dialog>
           )}
-          <MapHandler place={selectedPlace || homebaseLocation} />
+          <MapHandler place={focusSelectedLocation!} />
 
     </>
   );
