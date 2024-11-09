@@ -51,17 +51,17 @@ class InfoManagerDict:
         return user_id in self.data and activity_group in self.data[user_id].places
 
     def get_all_activity_groups(self, user_id: str):
-    """
-    Returns all activity groups and their places for a given user.
-    Returns a list of tuples containing (group_name, places_list)
-    """
-    if user_id not in self.data:
-        raise KeyError("User not found")
-    
-    return [
-        {
-            "name": group_name,
-            "places": places
-        }
-        for group_name, places in self.data[user_id].places.items()
-    ]
+        """
+        Returns all activity groups and their places for a given user.
+        Returns a list of tuples containing (group_name, places_list)
+        """
+        if user_id not in self.data:
+            raise KeyError("User not found")
+        
+        return [
+            {
+                "name": group_name,
+                "places": places
+            }
+            for group_name, places in self.data[user_id].places.items()
+        ]
