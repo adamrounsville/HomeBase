@@ -32,11 +32,13 @@ export class ActivityGroup {
   id: string;
   title: string;
   activities: Place[];
+  color: string;
 
-  constructor(id: string, title: string, activities: Place[] = []) {
+  constructor(id: string, title: string, activities: Place[] = [], color:string) {
       this.id = id;
       this.title = title;
       this.activities = activities;
+      this.color = color;
   }
 
   // Method to add a place to the activity group

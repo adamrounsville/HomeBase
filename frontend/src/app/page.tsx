@@ -9,14 +9,15 @@ import { useEffect, useRef, useState } from "react";
 import { APIProvider } from "@vis.gl/react-google-maps";
 import { ActivityGroup, Place } from "@/lib/utils";
 import DailyActivities from "./components/dailyActivities";
+import RouteOptimization from "./components/routeOptimization";
 
 export default function Home() {
   const [homebaseLocation, setHomebaseLocation] = useState<Place | null>(null);
   const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
   const [activityGroups, setActivityGroups] = useState([
-    new ActivityGroup("group-id-1", "Snorkelling", []),
-    new ActivityGroup("group-id-2", "Beaches", []),
-    new ActivityGroup("group-id-3", "Restaurants", []),
+    new ActivityGroup("group-id-1", "Snorkelling", [],  "#295ab3"),
+    new ActivityGroup("group-id-2", "Beaches", [], "#b32aa9"),
+    new ActivityGroup("group-id-3", "Restaurants", [], "#29b387"),
   ]);
 
   // Update this state to hold plans for multiple days
@@ -96,7 +97,7 @@ export default function Home() {
     <div>
       <NavBar />
       <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!}>
-        <div className={styles.page}>
+        <div className= "main">
           <main className={styles.main}>
             <div className="container">
               <header className="header">
@@ -135,13 +136,19 @@ export default function Home() {
                 />
               </section>
 
-              <section className="schedule">
-                <h3>Daily Schedule</h3>
-                <DailyActivities
-                  dailyPlans={dailyPlans}
-                  setDailyPlans={setDailyPlans}
-                  activityGroups={activityGroups}
-                />
+              <section className="schedule flex">
+                  <div className="flex-1">
+                    <h2 className="text-white text-xl font-semibold mb-2">Daily Plan</h2>
+                    <DailyActivities
+                      dailyPlans={dailyPlans}
+                      setDailyPlans={setDailyPlans}
+                      activityGroups={activityGroups}
+                    />
+                  </div>
+                  <div className=" schedule-optimization flex-2">
+                    <h2 className="text-white text-xl font-semibold mb-2">Optimize</h2>
+                    <RouteOptimization/>
+                  </div>
               </section>
             </div>
           </main>

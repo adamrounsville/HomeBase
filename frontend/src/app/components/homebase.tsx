@@ -73,7 +73,7 @@ const Homebase = ({onHomebaseSelect: onHomebaseSelect, homebaseLocation, setFocu
     const EditButton = () => {
         return (
             <Button 
-                className = "edit-button" 
+                className = " button-hover-effect edit-button" 
                 type="submit"
                 onClick={openModal}
                 >
@@ -88,7 +88,7 @@ const Homebase = ({onHomebaseSelect: onHomebaseSelect, homebaseLocation, setFocu
             <HomebaseInput/>
             <EditButton/>
             <Button 
-                className = "edit-button" 
+                className = "button-hover-effect edit-button" 
                 type="submit"
                 onClick={handleFocusRequest}
                 >
