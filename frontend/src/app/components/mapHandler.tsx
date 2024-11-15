@@ -12,8 +12,8 @@ const MapHandler = ({place}: Props) => {
   useEffect(() => {
     if (!map || !place) return;
 
-    if (place.Viewport) {
-      map.fitBounds(place.Viewport);
+    if (place.viewport) {
+      map.fitBounds(place.viewport);
     }
   }, [map, place]);
 

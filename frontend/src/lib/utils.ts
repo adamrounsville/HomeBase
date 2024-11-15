@@ -6,25 +6,25 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export class Place {
-  Name: string | undefined;
-  Address: string | undefined;
-  Place_ID: string | undefined;
-  Latitude: number | undefined;
-  Longitude: number | undefined;
-  Viewport: any;
+  name: string | undefined;
+  address: string | undefined;
+  placeId: string | undefined;
+  latitude: number | undefined;
+  longitude: number | undefined;
+  viewport: any;
 
   constructor(name: string | undefined, address: string | undefined, placeId: string | undefined, latitude: number | undefined, longitude: number |undefined, viewport:any) {
-      this.Name = name;
-      this.Address = address;
-      this.Place_ID = placeId;
-      this.Latitude = latitude;
-      this.Longitude = longitude;
-      this.Viewport = viewport
+      this.name = name;
+      this.address = address;
+      this.placeId = placeId;
+      this.latitude = latitude;
+      this.longitude = longitude;
+      this.viewport = viewport
   }
 
   // Method to display information about the place
   displayPlaceInfo(): string {
-      return `Place: ${this.Name}\nAddress: ${this.Address}\nPlace ID: ${this.Place_ID}\nLocation: (${this.Latitude}, ${this.Longitude})`;
+      return `Place: ${this.name}\nAddress: ${this.address}\nPlace ID: ${this.placeId}\nLocation: (${this.latitude}, ${this.longitude})`;
   }
 }
 

@@ -17,11 +17,11 @@ class InfoManagerDict:
     def __init__(self):
         self.data = dict()
 
-    def add_user(self, latitude: float, longitude: float, uid: str = None):
-        user_id = uuid.uuid4()
+    def add_user(self, latitude: float, longitude: float):
+        user_id = str(uuid.uuid4())
         info = UserInfo(home=(latitude, longitude), places=dict())
-        self.data[uid or user_id] = info
-        return uid or user_id
+        self.data[user_id] = info
+        return user_id
 
     def get_user(self, user_id: str):
         return self.data[user_id]
@@ -49,3 +49,19 @@ class InfoManagerDict:
 
     def activity_group_exists(self, user_id: str, activity_group: str):
         return user_id in self.data and activity_group in self.data[user_id].places
+
+    def get_all_activity_groups(self, user_id: str):
+        """
+        Returns all activity groups and their places for a given user.
+        Returns a list of tuples containing (group_name, places_list)
+        """
+        if user_id not in self.data:
+            raise KeyError("User not found")
+        
+        return [
+            {
+                "name": group_name,
+                "places": places
+            }
+            for group_name, places in self.data[user_id].places.items()
+        ]

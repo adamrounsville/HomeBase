@@ -41,11 +41,11 @@ function SearchBar({ onPlaceSelect }: Props) {
     placeAutocomplete.addListener("place_changed", () => {
       const autocomplete_place = placeAutocomplete.getPlace()
       const place = new Place(
-        autocomplete_place.name, 
-        autocomplete_place.formatted_address, 
-        autocomplete_place.place_id, 
-        autocomplete_place.geometry?.location?.lat(), 
-        autocomplete_place.geometry?.location?.lng(), 
+        autocomplete_place.name,
+        autocomplete_place.formatted_address,
+        autocomplete_place.place_id,
+        autocomplete_place.geometry?.location?.lat(),
+        autocomplete_place.geometry?.location?.lng(),
         autocomplete_place.geometry?.viewport
       )
       onPlaceSelect(place);

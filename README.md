@@ -37,9 +37,9 @@ Taking the Stress Out of Planning Trips
 
 4. Set up environment variables:
    ```bash
-   cp .env.example .env.local
+   cp .env.example .env
    ```
-   - Edit `.env.local` and add your Google Maps API key
+   - Edit `.env` and add your Google Maps API key
 
 5. Run the server:
    ```bash

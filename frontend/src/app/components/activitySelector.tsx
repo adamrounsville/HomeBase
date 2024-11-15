@@ -32,51 +32,72 @@ interface props {
   openGroup: string | null;
   selectedActivity: number | null;
   setActivityGroups: (activityGroups: ActivityGroup[]) => void;
-  addToDailyPlan: (activity: Place) => void; // New prop
+  addToDailyPlan: (activity: Place) => void;
   setOpenGroup: (group: any) => void;
-  setSelectedActivity: (activityId:number) => void;
-  
+  setSelectedActivity: (activityId: number) => void;
 }
 //  https://codesandbox.io/p/sandbox/react-colorful-demo-u5vwp?file=%2Fsrc%2FApp.js
 
-const ActivitySelector = ({ activityGroups, openGroup, addToDailyPlan,selectedActivity, setActivityGroups, setOpenGroup, setSelectedActivity}: props) => {
+const ActivitySelector = ({ activityGroups, openGroup, addToDailyPlan, selectedActivity, setActivityGroups, setOpenGroup, setSelectedActivity }: props) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [newActivityTitle, setNewActivityTitle] = useState("");
   const [color, setColor] = useState("#b32aa9");
 
-  // Function to toggle group dropdown
   const toggleGroup = (id: string) => {
     setOpenGroup((prevOpenGroup: string) => (prevOpenGroup === id ? null : id));
   };
 
-  // Function to handle adding a new activity group
-  const handleAddActivity = () => {
-    if (newActivityTitle.trim()) {
-      const newItem = new ActivityGroup(
-        `group-${activityGroups.length + 1}`,
-        newActivityTitle,
-        [],
-        color
-      );
+  const handleAddActivityGroup = async () => {
+    try {
+      if (newActivityTitle.trim()) {
+        const newActivityGroup = new ActivityGroup(
+          `group-${activityGroups.length + 1}`,
+          newActivityTitle,
+          [],
+          color
+        );
 
-      setActivityGroups([...activityGroups, newItem]);
-      setNewActivityTitle("");
+        const userId = localStorage.getItem('userId');
+        if (!userId) {
+          console.error('No user ID found');
+          return;
+        }
+
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/activity-group`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            user_id: userId,
+            activity_group: newActivityGroup.id,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to add activity group');
+        }
+
+        setActivityGroups([...activityGroups, newActivityGroup]);
+        setNewActivityTitle("");
+        setIsDialogOpen(false);
+      }
+    } catch (error) {
+      console.error('Error adding activity group:', error);
       setIsDialogOpen(false);
     }
   };
 
-  const handleSelectActivity = (index: number) =>{
-    if(index != selectedActivity){
+  const handleSelectActivity = (index: number) => {
+    if (index != selectedActivity) {
       setSelectedActivity(index);
     }
   }
 
-  // Function to handle removing an activity group
   const handleRemoveActivityGroup = (groupId: string) => {
     setActivityGroups(activityGroups.filter((group) => group.id !== groupId));
   };
 
-  // Function to handle removing an activity from a specific group
   const handleRemoveActivity = (groupId: string, activityIndex: number) => {
     setActivityGroups(
       activityGroups.map((group) =>
@@ -128,7 +149,7 @@ const ActivitySelector = ({ activityGroups, openGroup, addToDailyPlan,selectedAc
                   </div>
                 </div>
               </div>
-              <Button onClick={handleAddActivity}>Create</Button>
+              <Button onClick={handleAddActivityGroup}>Create</Button>
             </DialogHeader>
           </DialogContent>
         </Dialog>
@@ -182,7 +203,7 @@ const ActivitySelector = ({ activityGroups, openGroup, addToDailyPlan,selectedAc
                     >
                       <div className="flex justify-between items-center">
                         <span className="text-xl font-semibold text-gray-800">
-                          {activity.Name}
+                          {activity.name}
                         </span>
                         <DropdownMenu>
                           <DropdownMenuTrigger>
@@ -199,7 +220,7 @@ const ActivitySelector = ({ activityGroups, openGroup, addToDailyPlan,selectedAc
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </div>
-                      <h1 className="text-sm text-gray-600 mb-4">{activity.Address}</h1>
+                      <h1 className="text-sm text-gray-600 mb-4">{activity.address}</h1>
                     </div>
                   ))
                 )}

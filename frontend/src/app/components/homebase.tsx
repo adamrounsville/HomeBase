@@ -1,5 +1,5 @@
 "use client"
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -7,68 +7,67 @@ import HomeBaseLocationModal from './homebaseModal';
 import { Place } from '@/lib/utils';
 
 interface Props {
-    homebaseLocation: Place | null;
-    onHomebaseSelect: (place: Place | null) => void;
-    setFocusHomebase: (focusHomebase: boolean) => void;
-  }
+  homebaseLocation: Place | null;
+  onHomebaseSelect: (place: Place | null) => void;
+  setFocusHomebase: (focusHomebase: boolean) => void;
+}
 
-const Homebase = ({onHomebaseSelect: onHomebaseSelect, homebaseLocation, setFocusHomebase}: Props) => {
-    const [homebaseAddress, setHomebaseAddress] = useState<string>("")
-    const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+const Homebase = ({ onHomebaseSelect: onHomebaseSelect, homebaseLocation, setFocusHomebase }: Props) => {
+  const [homebaseAddress, setHomebaseAddress] = useState<string>("")
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
+  useEffect(() => {
+    const homebaseLocation = localStorage.getItem('homebaseLocation');
+    if (homebaseLocation != null) {
+      setHomebaseAddress(homebaseLocation);
+    } else {
+      setHomebaseAddress("Enter the address of your HomeBase!")
+    }
 
-    useEffect(() => {
-        const homebaseLocation = localStorage.getItem('homebaseLocation');
-        if(homebaseLocation != null){
-            setHomebaseAddress(homebaseLocation);
-        }
-        else{
-            setHomebaseAddress("Enter the address of your HomeBase!")
-        }
+    if (!homebaseLocation) {
+      setIsModalOpen(true);
+    }
+  }, []);
 
-        if (!homebaseLocation) {
-            setIsModalOpen(true);
-        }
-    }, []);
+  const handleSave = () => {
+    if (homebaseLocation) {
+      localStorage.setItem('homebaseLocation', homebaseLocation.address!);
+      const latitude = homebaseLocation.latitude;
+      const longitude = homebaseLocation.longitude
+      localStorage.setItem('homebasePositionLat', latitude!.toString());
+      localStorage.setItem('homebasePositionLng', longitude!.toString());
+      localStorage.setItem('homebaseName', homebaseLocation.name!);
+      localStorage.setItem('homebaseID', homebaseLocation.placeId!);
+      const viewport = JSON.stringify(homebaseLocation.viewport.toJSON())
+      localStorage.setItem('homebaseViewport', viewport!)
+      setHomebaseAddress(homebaseLocation.address!);
+    }
+  };
 
-    const handleSave = () => {
-        if(homebaseLocation){
-            localStorage.setItem('homebaseLocation', homebaseLocation.Address!);
-            const latitude = homebaseLocation.Latitude;
-            const longitude = homebaseLocation.Longitude
-            localStorage.setItem('homebasePositionLat', latitude!.toString());
-            localStorage.setItem('homebasePositionLng', longitude!.toString());
-            localStorage.setItem('homebaseName', homebaseLocation.Name!);
-            localStorage.setItem('homebaseID', homebaseLocation.Place_ID!);
-            const viewport  = JSON.stringify(homebaseLocation.Viewport.toJSON())
-            localStorage.setItem('homebaseViewport', viewport! )
-            setHomebaseAddress(homebaseLocation.Address!);
-        }
-    };
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
 
-    const openModal = () => {
-        setIsModalOpen(true);
-    };
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
 
-    const closeModal = () => {
-        setIsModalOpen(false);
-    };
+  const handleFocusRequest = () => {
+    setFocusHomebase(true);
+  };
 
-    const handleFocusRequest = () => {
-        setFocusHomebase(true);
-    };
  
-    const HomebaseInput = () => {
-        return (
-            <Input 
-                className='homebase-input'
-                value={homebaseAddress}
-                readOnly 
-            />
+  const HomebaseInput = () => {
+      return (
+          <Input 
+              className='homebase-input'
+              value={homebaseAddress}
+              readOnly 
+          />
 
 
-        );
-    };
+      );
+  };
 
     const EditButton = () => {
         return (
@@ -104,7 +103,5 @@ const Homebase = ({onHomebaseSelect: onHomebaseSelect, homebaseLocation, setFocu
         </div>
         
     );
-
-};
-
-export default  Homebase;
+  }
+export default Homebase;

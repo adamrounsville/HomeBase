@@ -7,7 +7,7 @@ import {
   Pin,
   useAdvancedMarkerRef,
 } from "@vis.gl/react-google-maps";
-import MapHandler from "./map-Handler";
+import MapHandler from "./mapHandler";
 import { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -116,8 +116,8 @@ const GoogleMapComponent = ({
   // When the selected place changes, this computes the lat and longitude that is set
   useEffect(() => {
     if (selectedPlace) {
-      const latitude = selectedPlace.Latitude!;
-      const longitude = selectedPlace.Longitude!;
+      const latitude = selectedPlace.latitude!;
+      const longitude = selectedPlace.longitude!;
       setInfoWindowShown(false);
       setPosition({ lat: latitude, lng: longitude });
       
@@ -127,8 +127,8 @@ const GoogleMapComponent = ({
 
   useEffect(() => {
     if (homebaseLocation) {
-      const latitude = homebaseLocation.Latitude!;
-      const longitude = homebaseLocation.Longitude!;
+      const latitude = homebaseLocation.latitude!;
+      const longitude = homebaseLocation.longitude!;
       setInfoWindowShown(false);
       setHomebasePosition({ lat: latitude, lng: longitude });
     }
@@ -169,12 +169,12 @@ const GoogleMapComponent = ({
 
           
             <AdvancedMarkerWithRef
-              key={place.Place_ID}
-              position={{lat:place.Latitude ?? 0, lng : place.Longitude ?? 0}}
+              key={place.placeId}
+              position={{lat:place.latitude ?? 0, lng : place.longitude ?? 0}}
               onMarkerClick={(
                 marker: google.maps.marker.AdvancedMarkerElement
               ) => handleMarkerClick(marker, place)}
-              onMouseEnter={() => onMouseEnter(place.Place_ID ?? "NO_ID")}
+              onMouseEnter={() => onMouseEnter(place.placeId ?? "NO_ID")}
               onMouseLeave={onMouseLeave}
             >
       
@@ -190,12 +190,12 @@ const GoogleMapComponent = ({
             const selectedGroup = activityGroups.find((group) => group.id === openGroup);
             return (
               <AdvancedMarkerWithRef
-                key={place.Place_ID}
-                position={{ lat: place.Latitude ?? 0, lng: place.Longitude ?? 0 }}
+                key={place.placeId}
+                position={{ lat: place.latitude ?? 0, lng: place.longitude ?? 0 }}
                 onMarkerClick={(marker: google.maps.marker.AdvancedMarkerElement) =>
                   handleMarkerClick(marker, place)
                 }
-                onMouseEnter={() => onMouseEnter(place.Place_ID ?? "NO_ID")}
+                onMouseEnter={() => onMouseEnter(place.placeId ?? "NO_ID")}
                 onMouseLeave={onMouseLeave}
               >
                 <Pin
@@ -209,7 +209,7 @@ const GoogleMapComponent = ({
           // Homebase Marker
           {homebaseLocation && (
               <AdvancedMarkerWithRef
-                key={homebaseLocation.Place_ID}
+                key={homebaseLocation.placeId}
                 onMarkerClick={(marker) => handleMarkerClick(marker, homebaseLocation)}
                 position={homebasePosition}
               >
@@ -237,10 +237,10 @@ const GoogleMapComponent = ({
             onCloseClick={handleInfowindowCloseClick}
           >
             <h1 className="text-xl font-semibold text-gray-800">
-              {selectedPlace?.Name}
+              {selectedPlace?.name}
             </h1>
             <h1 className="text-sm text-gray-600 mb-4">
-              {selectedPlace?.Address}
+              {selectedPlace?.address}
             </h1>
 
             <Button onClick={onAddToActivityGroupClick}>
@@ -255,10 +255,10 @@ const GoogleMapComponent = ({
             onCloseClick={handleInfowindowCloseClick}
           >
             <h1 className="text-xl font-semibold text-gray-800">
-              {selectedLocation?.Name}
+              {selectedLocation?.name}
             </h1>
             <h1 className="text-sm text-gray-600 mb-4">
-              {selectedLocation?.Address}
+              {selectedLocation?.address}
             </h1>
           </InfoWindow>
         )}
