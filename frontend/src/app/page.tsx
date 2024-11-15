@@ -130,7 +130,6 @@ export default function Home() {
 
               <section className="schedule flex">
                   <div className="flex-1">
-                    <h2 className="text-white text-xl font-semibold mb-2">Daily Plan</h2>
                     <DailyActivities
                       dailyPlans={dailyPlans}
                       setDailyPlans={setDailyPlans}

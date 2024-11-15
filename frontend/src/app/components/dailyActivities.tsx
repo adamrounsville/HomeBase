@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ActivityGroup, Place } from "@/lib/utils";
+import { ActivityGroup, cn, Place } from "@/lib/utils";
 import {
   Dialog,
   DialogContent,
@@ -10,6 +10,24 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import * as React from "react"
+import { format } from "date-fns"
+import { CalendarIcon } from "lucide-react"
+import { Calendar } from "@/components/ui/calendar"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination"
 
 type Day = "Day 1" | "Day 2" | "Day 3";
 
@@ -26,6 +44,7 @@ const DailyActivities = ({
 }: DailyActivitiesProps) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Day>("Day 1");
+  const [days, setDays] = useState<Day[]>(["Day 1", "Day 2", "Day 3"]);
 
   // Add activity to the selected date's daily plan
   const addToDailyPlan = (activity: Place) => {
@@ -40,6 +59,14 @@ const DailyActivities = ({
     setIsDialogOpen(false); // Close dialog after adding
   };
 
+  const handleDateSelect = (date: Date) => {
+    const formattedDate = format(date, "PPP");
+    const newDay = `Day ${days.length + 1}` as Day;
+    setDays([...days, newDay]);
+    setDailyPlans({ ...dailyPlans, [newDay]: [] });
+    setSelectedDate(newDay);
+  };
+
   // Remove activity from a specific day's plan
   const removeFromDailyPlan = (date: Day, activityId: string) => {
     setDailyPlans({
@@ -48,19 +75,59 @@ const DailyActivities = ({
     });
   };
 
+  function DatePickerDemo({ onDateSelect }: { onDateSelect: (date: Date) => void }) {
+    const [date, setDate] = useState<Date | undefined>();
+
+    const handleDateSelect = (selectedDate: Date | undefined) => {
+      if (selectedDate) {
+        setDate(selectedDate);
+        onDateSelect(selectedDate);
+      }
+    };
+   
+    return (
+      <Popover>
+      <PopoverTrigger asChild>
+        <Button
+          variant={"outline"}
+          className={cn(
+            "w-[280px] justify-start text-left font-normal",
+            !date && "text-muted-foreground"
+          )}
+        >
+          <CalendarIcon className="mr-2 h-4 w-4" />
+          {date ? format(date, "PPP") : <span>Pick a date</span>}
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-auto p-0">
+        <Calendar
+          mode="single"
+          selected={date}
+          onSelect={handleDateSelect}
+          initialFocus
+        />
+      </PopoverContent>
+    </Popover>
+    )
+  }
+
   return (
     <div className=" daily-schedule-container p-4 bg-white shadow-md rounded-lg">
+      <div className="flex space-x-4 mb-4">
+        <h2 className="text-dark text-xl font-semibold mb-2">Daily Plan</h2>
+        <DatePickerDemo onDateSelect={handleDateSelect}/>
+      </div>
       {/* Date Selector */}
       <div className="flex space-x-4 mb-4">
-        {(["Day 1", "Day 2", "Day 3"] as Day[]).map((day) => (
+    
+        {days.map((day) => (
           <Button
             key={day}
             variant={selectedDate === day ? "default" : "outline"}
             onClick={() => setSelectedDate(day)}
-            className={`flex-1 ${selectedDate === day ? "bg-blue-500 text-white" : "text-blue-500"
-              }`}
+            className={`flex-1 ${selectedDate === day ? "bg-blue-500 text-white" : "text-blue-500"}`}
           >
-            {day}
+            {day === selectedDate ? format(new Date(), "PPP") : day}
           </Button>
         ))}
       </div>
