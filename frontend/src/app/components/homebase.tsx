@@ -56,48 +56,52 @@ const Homebase = ({ onHomebaseSelect: onHomebaseSelect, homebaseLocation, setFoc
     setFocusHomebase(true);
   };
 
+ 
   const HomebaseInput = () => {
-    return (
-      <Input
-        className='homebase-input'
-        value={homebaseAddress}
-        readOnly
-      />
-    );
+      return (
+          <Input 
+              className='homebase-input'
+              value={homebaseAddress}
+              readOnly 
+          />
+
+
+      );
   };
 
-  const EditButton = () => {
-    return (
-      <Button
-        className="edit-button"
-        type="submit"
-        onClick={openModal}
-      >
-        <i className="fas fa-edit"></i>
-      </Button>
+    const EditButton = () => {
+        return (
+            <Button 
+                className = " button-hover-effect edit-button" 
+                type="submit"
+                onClick={openModal}
+                >
+                <i className="fas fa-edit"></i>
+            </Button>
+        );
+    };
+
+    return(
+        <div className='homebase-section'>
+            <h2 className='homebase-title'>Homebase:</h2>
+            <HomebaseInput/>
+            <EditButton/>
+            <Button 
+                className = "button-hover-effect edit-button" 
+                type="submit"
+                onClick={handleFocusRequest}
+                >
+                <i className="fas fa-home"></i>
+            </Button>
+            <HomeBaseLocationModal 
+                isOpen={isModalOpen} 
+                onClose={closeModal} 
+                onSave={handleSave}
+                onPlaceSelect={onHomebaseSelect}
+                
+            />
+        </div>
+        
     );
-  };
-
-  return (
-    <div className='homebase-section'>
-      <h2 className='homebase-title'>Homebase:</h2>
-      <HomebaseInput />
-      <EditButton />
-      <Button
-        className="edit-button"
-        type="submit"
-        onClick={handleFocusRequest}
-      >
-        <i className="fas fa-home"></i>
-      </Button>
-      <HomeBaseLocationModal
-        isOpen={isModalOpen}
-        onClose={closeModal}
-        onSave={handleSave}
-        onPlaceSelect={onHomebaseSelect}
-      />
-    </div>
-  );
-};
-
+  }
 export default Homebase;

@@ -62,7 +62,7 @@ function SearchBar({ onPlaceSelect }: Props) {
           ref={inputRef}
         />
       </div>
-      <Button type="submit">Search</Button>
+      <Button className = "button-hover-effect" type="submit">Search</Button>
     </div>
   );
 }

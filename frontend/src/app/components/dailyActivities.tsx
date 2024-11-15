@@ -49,9 +49,7 @@ const DailyActivities = ({
   };
 
   return (
-    <div className="daily-activities p-4 bg-white shadow-md rounded-lg">
-      <h3 className="text-xl font-semibold mb-4">Daily Plan</h3>
-
+    <div className=" daily-schedule-container p-4 bg-white shadow-md rounded-lg">
       {/* Date Selector */}
       <div className="flex space-x-4 mb-4">
         {(["Day 1", "Day 2", "Day 3"] as Day[]).map((day) => (
@@ -110,7 +108,7 @@ const DailyActivities = ({
           </DialogHeader>
 
           {/* Scrollable Activity Groups */}
-          <div className="activity-groups overflow-y-auto max-h-[400px]">
+          <div className="overflow-y-auto max-h-[400px]">
             {activityGroups.map((group) => (
               <div key={group.id} className="activity-group mb-4">
                 <h4 className="font-semibold text-lg text-gray-700">
