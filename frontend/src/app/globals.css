@@ -1395,7 +1395,7 @@ a {
 }
 
 .main{
-  background-image: url("resources/landscape.jpg");
+  /* background-image: url("resources/landscape.jpg"); */
   display: grid;
   align-items: center;
   justify-items: center;
@@ -1404,7 +1404,8 @@ a {
   background-position: center;
   background-repeat: no-repeat;
   padding: 10px;
-  /* background-color: #1a8d4c; */
+  /* background-color: #050505; */
+  background-color: #fff;
 }
 
 .navbar {
@@ -1452,7 +1453,9 @@ a {
   align-items: center;
   /* background-color: #d3d3d3; */
   /* background-color: #f8f9fa; */
-  background-color: rgba(0, 0, 0, .4);
+  /* background-color: rgba(0, 0, 0, .4); */
+  /* background-color: rgb(250, 247, 247, .2); */
+  background-color: rgba(59, 56, 56, 0.04);
   padding: 10px;
   border-radius: 8px;
 }
@@ -1489,7 +1492,8 @@ a {
   grid-area: sidebar;
   /* background-color: #d3d3d3; */
   /* background-color: #f8f9fa; */
-  background-color: rgba(0, 0, 0, .4);
+  /* background-color: rgb(250, 247, 247, .2); */
+  background-color: rgba(59, 56, 56, 0.04);
   padding: 10px;
   border-radius: 8px;
 }
@@ -1544,9 +1548,6 @@ li {
 
 .homebase-title {
   margin-right: 15px;
-  font-size: 22px;
-  font-weight: bold;
-  color: white;
 }
 
 /* Map section */
@@ -1569,7 +1570,9 @@ li {
   padding: 20px;
   border-radius: 8px;
   /* background-color: #f8f9fa; */
-  background-color: rgba(0, 0, 0, .4);
+  /* background-color: rgba(0, 0, 0, .4); */
+  /* background-color: rgb(250, 247, 247, .2); */
+  background-color: rgba(59, 56, 56, 0.04);
   max-height: 310px;
 }
 
@@ -1626,11 +1629,6 @@ li {
   justify-content: space-between;
   align-items: center;
   justify-items: center;
-}
-
-.activity-title {
-  font-size: 22px;
-  color: white;
 }
 
 .activity-list {

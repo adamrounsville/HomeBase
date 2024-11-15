@@ -194,7 +194,7 @@ const DailyActivities = ({
                   variant={isSelected ? "default" : "outline"}
                   onClick={() => setSelectedDate(date)}
                   className={`flex-1 max-w-[200px] ${
-                    isSelected ? "bg-blue-500 text-white" : "text-blue-500"
+                    isSelected ? "bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 p-4 shadow-lg" : "text-black"
                   } flex items-center justify-center`}
                 >
                   {dateKey}
