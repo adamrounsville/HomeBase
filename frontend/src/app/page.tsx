@@ -105,7 +105,6 @@ export default function Home() {
               <aside className="sidebar">
                 <ActivitySelector
                   activityGroups={activityGroups}
-                  selectedActivity={selectedActivity}
                   setActivityGroups={setActivityGroups}
                   addToDailyPlan={(activity) =>
                     addToDailyPlan(activity, "Day 1")

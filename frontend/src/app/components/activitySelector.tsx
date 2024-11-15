@@ -30,7 +30,6 @@ import { HexColorPicker } from "react-colorful";
 interface props {
   activityGroups: ActivityGroup[];
   openGroup: string[];
-  selectedActivity: {id: string, index: number} | null;
   setActivityGroups: (activityGroups: ActivityGroup[]) => void;
   addToDailyPlan: (activity: Place) => void;
   setOpenGroup: React.Dispatch<React.SetStateAction<string[]>>;
@@ -38,7 +37,7 @@ interface props {
 }
 //  https://codesandbox.io/p/sandbox/react-colorful-demo-u5vwp?file=%2Fsrc%2FApp.js
 
-const ActivitySelector = ({ activityGroups, openGroup, addToDailyPlan, selectedActivity, setActivityGroups, setOpenGroup, setSelectedActivity }: props) => {
+const ActivitySelector = ({ activityGroups, openGroup, addToDailyPlan, setActivityGroups, setOpenGroup, setSelectedActivity }: props) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [newActivityTitle, setNewActivityTitle] = useState("");
   const [color, setColor] = useState("#b32aa9");
@@ -122,6 +121,16 @@ const ActivitySelector = ({ activityGroups, openGroup, addToDailyPlan, selectedA
     <div onClick={(e) => e.stopPropagation()}>{children}</div>
   );
 
+  const handleSaveColor = (currentGroupId: string) => {
+    const updatedGroups = activityGroups.map((group) =>
+      group.id === currentGroupId
+        ? new ActivityGroup(group.id, group.title, group.activities, color)
+        : group
+    );
+  
+    setActivityGroups(updatedGroups);
+  };
+
   return (
     <>
       <div className="activity-selector-header p-4 bg-white shadow-md rounded-lg">
@@ -151,7 +160,7 @@ const ActivitySelector = ({ activityGroups, openGroup, addToDailyPlan, selectedA
                 <div className="homebase-modal-div">
                   <HexColorPicker color={color} onChange={setColor} />
                   <div className="value" style={{ borderColor: color }}>
-                    Current color {color}
+                    Current color
                   </div>
                 </div>
               </div>
@@ -161,7 +170,7 @@ const ActivitySelector = ({ activityGroups, openGroup, addToDailyPlan, selectedA
         </Dialog>
       </div>
 
-      <div className="activity-list">
+      <div className="activity-list ">
         {activityGroups.map((group) => (
           <div key={group.id} className="activity-group duration-200 ease-in-out hover:shadow-lg hover:scale-105">
             <div className="group-header" onClick={() => toggleGroup(group.id)}>
@@ -174,7 +183,7 @@ const ActivitySelector = ({ activityGroups, openGroup, addToDailyPlan, selectedA
                     <div className="homebase-modal-div"  onClick={(e) => e.stopPropagation()}>
                         <HexColorPicker color={group.color} onChange={setColor} />
                     </div>
-                    <Button onClick={(e) => e.stopPropagation()}>Save Color</Button>
+                    <Button onClick={(e) => { e.stopPropagation(); handleSaveColor(group.id); }}>Save Color</Button>
                   </PopoverContent>
                   
               </Popover>
