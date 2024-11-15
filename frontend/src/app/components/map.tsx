@@ -165,27 +165,6 @@ const GoogleMapComponent = ({
           clickableIcons={true}
           mapId="HOMEBASE_MAP_ID"
           >
-          {/* {displayMarkers && displayMarkers.map((place) => (
-
-          
-            <AdvancedMarkerWithRef
-              key={place.placeId}
-              position={{lat:place.latitude ?? 0, lng : place.longitude ?? 0}}
-              onMarkerClick={(
-                marker: google.maps.marker.AdvancedMarkerElement
-              ) => handleMarkerClick(marker, place)}
-              onMouseEnter={() => onMouseEnter(place.placeId ?? "NO_ID")}
-              onMouseLeave={onMouseLeave}
-            >
-      
-              <Pin
-               background={openGroup.}
-               borderColor={selectedId === place.Place_ID ? '#1e89a1' : null}
-               glyphColor={selectedId === place.Place_ID ? '#0f677a' : null} 
-              />
-            
-            </AdvancedMarkerWithRef>
-          ))} */}
           {displayMarkers && displayMarkers.map((place) => {
             const selectedGroup = activityGroups.find((group) => group.id === openGroup);
             return (

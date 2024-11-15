@@ -86,7 +86,7 @@ export default function Home() {
   }), [homebaseLocation, selectedPlace, selectedActivity, focusHomebase]
 
   return (
-    <div>
+    <div className="bg-white">
       <NavBar />
       <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!}>
         <div className= "main">

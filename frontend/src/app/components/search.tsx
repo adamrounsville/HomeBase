@@ -53,7 +53,7 @@ function SearchBar({ onPlaceSelect }: Props) {
   }, [onPlaceSelect, placeAutocomplete]);
 
   return (
-    <div className="flex w-full max-w-sm items-center space-x-2">
+    <div className="flex w-full max-w-sm items-center space-x-2 p-4 bg-white shadow-md rounded-lg">
       <div className="autocomplete-container">
         <Input
           type="text"

@@ -118,8 +118,8 @@ const ActivitySelector = ({ activityGroups, openGroup, addToDailyPlan, selectedA
 
   return (
     <>
-      <div className="activity-selector-header">
-        <h2 className="activity-title">Activities</h2>
+      <div className="activity-selector-header p-4 bg-white shadow-md rounded-lg">
+        <h2 className="text-dark text-xl font-semibold mb-2">Activities</h2>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger>
             <i

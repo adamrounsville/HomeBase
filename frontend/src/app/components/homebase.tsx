@@ -82,8 +82,9 @@ const Homebase = ({ onHomebaseSelect: onHomebaseSelect, homebaseLocation, setFoc
     };
 
     return(
-        <div className='homebase-section'>
-            <h2 className='homebase-title'>Homebase:</h2>
+        <div className='homebase-section p-4 bg-white shadow-md rounded-lg'>
+         
+            <h2 className='homebase-title text-xl font-semibold mb-2 text-black'>Homebase:</h2>
             <HomebaseInput/>
             <EditButton/>
             <Button 
