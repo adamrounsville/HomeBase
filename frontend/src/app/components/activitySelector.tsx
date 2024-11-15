@@ -29,12 +29,12 @@ import { HexColorPicker } from "react-colorful";
 
 interface props {
   activityGroups: ActivityGroup[];
-  openGroup: string | null;
-  selectedActivity: number | null;
+  openGroup: string[];
+  selectedActivity: {id: string, index: number} | null;
   setActivityGroups: (activityGroups: ActivityGroup[]) => void;
   addToDailyPlan: (activity: Place) => void;
-  setOpenGroup: (group: any) => void;
-  setSelectedActivity: (activityId: number) => void;
+  setOpenGroup: React.Dispatch<React.SetStateAction<string[]>>;
+  setSelectedActivity: (activity: { id: string, index: number } | null) => void;
 }
 //  https://codesandbox.io/p/sandbox/react-colorful-demo-u5vwp?file=%2Fsrc%2FApp.js
 
@@ -43,8 +43,15 @@ const ActivitySelector = ({ activityGroups, openGroup, addToDailyPlan, selectedA
   const [newActivityTitle, setNewActivityTitle] = useState("");
   const [color, setColor] = useState("#b32aa9");
 
+  // const toggleGroup = (id: string) => {
+  //   setOpenGroup((prevOpenGroup: string) => (prevOpenGroup === id ? null : id));
+  // };
   const toggleGroup = (id: string) => {
-    setOpenGroup((prevOpenGroup: string) => (prevOpenGroup === id ? null : id));
+    setOpenGroup((prevOpenGroups: string[]) =>
+      prevOpenGroups.includes(id)
+        ? prevOpenGroups.filter((groupId) => groupId !== id)
+        : [...prevOpenGroups, id]
+    );
   };
 
   const handleAddActivityGroup = async () => {
@@ -88,10 +95,9 @@ const ActivitySelector = ({ activityGroups, openGroup, addToDailyPlan, selectedA
     }
   };
 
-  const handleSelectActivity = (index: number) => {
-    if (index != selectedActivity) {
-      setSelectedActivity(index);
-    }
+  const handleSelectActivity = (group: string, index: number) => {
+    const selectedActivity = {id: group, index: index};
+    setSelectedActivity(selectedActivity);
   }
 
   const handleRemoveActivityGroup = (groupId: string) => {
@@ -188,7 +194,7 @@ const ActivitySelector = ({ activityGroups, openGroup, addToDailyPlan, selectedA
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
-            {openGroup === group.id && (
+            {openGroup.includes(group.id) && (
               <div className="activity-items-container space-y-4 pt-2">
                 {group.activities.length === 0 ? (
                   <div className="no-items-message">
@@ -199,7 +205,7 @@ const ActivitySelector = ({ activityGroups, openGroup, addToDailyPlan, selectedA
                     <div
                       key={index}
                       className="activity-item relative bg-gray-100 border border-gray-300 p-4 rounded-lg shadow-sm duration-200 ease-in-out hover:bg-gray-200 hover:shadow-lg hover:scale-105"
-                      onClick={() => handleSelectActivity(index)}
+                      onClick={() => handleSelectActivity(group.id, index)}
                     >
                       <div className="flex justify-between items-center">
                         <span className="text-xl font-semibold text-gray-800">

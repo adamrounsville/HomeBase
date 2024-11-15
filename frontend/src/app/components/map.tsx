@@ -22,11 +22,11 @@ import { ActivityGroup, Place } from "@/lib/utils";
 interface Props {
   selectedPlace: Place | null;
   homebaseLocation: Place | null;
-  openGroup: string | null;
+  openGroup: string[];
   activityGroups: ActivityGroup[];
   focusSelectedLocation: Place | undefined;
   setActivityGroups: (activityGroups: ActivityGroup[]) => void;
-  setSelectedActivity:(activity: number) => void;
+  setSelectedActivity: (activity: { id: string, index: number } | null) => void;
   
 }
 
@@ -105,7 +105,7 @@ const GoogleMapComponent = ({
     setSelectedId(null);
     setSelectedMarker(null);
     setInfoWindowShown(false);
-    setSelectedActivity(100);
+    setSelectedActivity({id: "CANCEL ID", index: 100});
   }, []);
 
   //Closes the Info Window
@@ -147,14 +147,17 @@ const GoogleMapComponent = ({
   }, []);
 
   useEffect(() => {
-    if (openGroup) {
-      const selectedGroup = activityGroups.find((group) => group.id === openGroup);
-      setDisplayMarkers(selectedGroup?.activities);
+    if (openGroup.length > 0) {
+      // Collect activities from all open groups
+      const activitiesFromOpenGroups = activityGroups
+        .filter((group) => openGroup.includes(group.id))
+        .flatMap((group) => group.activities);
+  
+      setDisplayMarkers(activitiesFromOpenGroups);
+    } else {
+      setDisplayMarkers(undefined);
     }
-    else {
-      setDisplayMarkers(undefined); 
-    }
-  }), [openGroup]
+  }, [openGroup, activityGroups]);
   
   return (
       <>
@@ -165,25 +168,29 @@ const GoogleMapComponent = ({
           clickableIcons={true}
           mapId="HOMEBASE_MAP_ID"
           >
-          {displayMarkers && displayMarkers.map((place) => {
-            const selectedGroup = activityGroups.find((group) => group.id === openGroup);
-            return (
-              <AdvancedMarkerWithRef
-                key={place.placeId}
-                position={{ lat: place.latitude ?? 0, lng: place.longitude ?? 0 }}
-                onMarkerClick={(marker: google.maps.marker.AdvancedMarkerElement) =>
-                  handleMarkerClick(marker, place)
-                }
-                onMouseEnter={() => onMouseEnter(place.placeId ?? "NO_ID")}
-                onMouseLeave={onMouseLeave}
-              >
-                <Pin
-                  background={selectedGroup?.color ?? '#ccc'} // Use selectedGroup's color or fallback
-                  borderColor={"#000"}
-                  glyphColor={"#000"}
-                />
-              </AdvancedMarkerWithRef>
-            );
+            {displayMarkers && displayMarkers.map((place) => {
+              // Find the group that contains this place
+              const group = activityGroups.find((group) =>
+                group.activities.some((activity) => activity.placeId === place.placeId)
+              );
+
+              return (
+                <AdvancedMarkerWithRef
+                  key={place.placeId}
+                  position={{ lat: place.latitude ?? 0, lng: place.longitude ?? 0 }}
+                  onMarkerClick={(marker: google.maps.marker.AdvancedMarkerElement) =>
+                    handleMarkerClick(marker, place)
+                  }
+                  onMouseEnter={() => onMouseEnter(place.placeId ?? "NO_ID")}
+                  onMouseLeave={onMouseLeave}
+                >
+                  <Pin
+                    background={group?.color ?? '#ccc'} // Use the color of the group that contains the place
+                    borderColor={"#000"}
+                    glyphColor={"#000"}
+                  />
+                </AdvancedMarkerWithRef>
+              );
             })}
           // Homebase Marker
           {homebaseLocation && (
