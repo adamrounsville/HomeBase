@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 *, ::before, ::after {
   --tw-border-spacing-x: 0;
   --tw-border-spacing-y: 0;
@@ -1570,7 +1574,7 @@ li {
 }
 
 .daily-schedule-container{
-  max-height: 250px;
+  max-height: 280px;
 }
 .daily-schedule-item-group{
   max-height: 100px;
