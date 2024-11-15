@@ -29,22 +29,28 @@ import { HexColorPicker } from "react-colorful";
 
 interface props {
   activityGroups: ActivityGroup[];
-  openGroup: string | null;
-  selectedActivity: number | null;
+  openGroup: string[];
   setActivityGroups: (activityGroups: ActivityGroup[]) => void;
   addToDailyPlan: (activity: Place) => void;
-  setOpenGroup: (group: any) => void;
-  setSelectedActivity: (activityId: number) => void;
+  setOpenGroup: React.Dispatch<React.SetStateAction<string[]>>;
+  setSelectedActivity: (activity: { id: string, index: number } | null) => void;
 }
 //  https://codesandbox.io/p/sandbox/react-colorful-demo-u5vwp?file=%2Fsrc%2FApp.js
 
-const ActivitySelector = ({ activityGroups, openGroup, addToDailyPlan, selectedActivity, setActivityGroups, setOpenGroup, setSelectedActivity }: props) => {
+const ActivitySelector = ({ activityGroups, openGroup, addToDailyPlan, setActivityGroups, setOpenGroup, setSelectedActivity }: props) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [newActivityTitle, setNewActivityTitle] = useState("");
   const [color, setColor] = useState("#b32aa9");
 
+  // const toggleGroup = (id: string) => {
+  //   setOpenGroup((prevOpenGroup: string) => (prevOpenGroup === id ? null : id));
+  // };
   const toggleGroup = (id: string) => {
-    setOpenGroup((prevOpenGroup: string) => (prevOpenGroup === id ? null : id));
+    setOpenGroup((prevOpenGroups: string[]) =>
+      prevOpenGroups.includes(id)
+        ? prevOpenGroups.filter((groupId) => groupId !== id)
+        : [...prevOpenGroups, id]
+    );
   };
 
   const handleAddActivityGroup = async () => {
@@ -88,10 +94,9 @@ const ActivitySelector = ({ activityGroups, openGroup, addToDailyPlan, selectedA
     }
   };
 
-  const handleSelectActivity = (index: number) => {
-    if (index != selectedActivity) {
-      setSelectedActivity(index);
-    }
+  const handleSelectActivity = (group: string, index: number) => {
+    const selectedActivity = {id: group, index: index};
+    setSelectedActivity(selectedActivity);
   }
 
   const handleRemoveActivityGroup = (groupId: string) => {
@@ -115,6 +120,16 @@ const ActivitySelector = ({ activityGroups, openGroup, addToDailyPlan, selectedA
   const StopPropagationWrapper = ({ children }: { children: React.ReactNode }) => (
     <div onClick={(e) => e.stopPropagation()}>{children}</div>
   );
+
+  const handleSaveColor = (currentGroupId: string) => {
+    const updatedGroups = activityGroups.map((group) =>
+      group.id === currentGroupId
+        ? new ActivityGroup(group.id, group.title, group.activities, color)
+        : group
+    );
+  
+    setActivityGroups(updatedGroups);
+  };
 
   return (
     <>
@@ -145,7 +160,7 @@ const ActivitySelector = ({ activityGroups, openGroup, addToDailyPlan, selectedA
                 <div className="homebase-modal-div">
                   <HexColorPicker color={color} onChange={setColor} />
                   <div className="value" style={{ borderColor: color }}>
-                    Current color {color}
+                    Current color
                   </div>
                 </div>
               </div>
@@ -155,7 +170,7 @@ const ActivitySelector = ({ activityGroups, openGroup, addToDailyPlan, selectedA
         </Dialog>
       </div>
 
-      <div className="activity-list">
+      <div className="activity-list ">
         {activityGroups.map((group) => (
           <div key={group.id} className="activity-group duration-200 ease-in-out hover:shadow-lg hover:scale-105">
             <div className="group-header" onClick={() => toggleGroup(group.id)}>
@@ -168,7 +183,7 @@ const ActivitySelector = ({ activityGroups, openGroup, addToDailyPlan, selectedA
                     <div className="homebase-modal-div"  onClick={(e) => e.stopPropagation()}>
                         <HexColorPicker color={group.color} onChange={setColor} />
                     </div>
-                    <Button onClick={(e) => e.stopPropagation()}>Save Color</Button>
+                    <Button onClick={(e) => { e.stopPropagation(); handleSaveColor(group.id); }}>Save Color</Button>
                   </PopoverContent>
                   
               </Popover>
@@ -188,7 +203,7 @@ const ActivitySelector = ({ activityGroups, openGroup, addToDailyPlan, selectedA
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
-            {openGroup === group.id && (
+            {openGroup.includes(group.id) && (
               <div className="activity-items-container space-y-4 pt-2">
                 {group.activities.length === 0 ? (
                   <div className="no-items-message">
@@ -199,7 +214,7 @@ const ActivitySelector = ({ activityGroups, openGroup, addToDailyPlan, selectedA
                     <div
                       key={index}
                       className="activity-item relative bg-gray-100 border border-gray-300 p-4 rounded-lg shadow-sm duration-200 ease-in-out hover:bg-gray-200 hover:shadow-lg hover:scale-105"
-                      onClick={() => handleSelectActivity(index)}
+                      onClick={() => handleSelectActivity(group.id, index)}
                     >
                       <div className="flex justify-between items-center">
                         <span className="text-xl font-semibold text-gray-800">

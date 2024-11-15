@@ -38,8 +38,8 @@ export default function Home() {
     }
   };
 
-  const [openGroup, setOpenGroup] = useState<string | null>(null);
-  const [selectedActivity, setSelectedActivity] = useState<number | null>(100);
+  const [openGroups, setOpenGroups] = useState<string[]>([]);
+  const [selectedActivity, setSelectedActivity] = useState<{id: string, index: number}| null>({id:"RANDID", index:20});
   const [focusHomebase, setFocusHomebase] = useState(false);
   const [focusSelectedLocation, setFocusSelectedLocation] = useState<Place | undefined>();
 
@@ -68,11 +68,12 @@ export default function Home() {
       setFocusSelectedLocation(selectedPlace!);
     }
     else if (selectedActivity !== prevSelectedActivity.current) {
-      const selectedGroup = activityGroups.find((group) => group.id === openGroup);
-      const activity = selectedGroup?.activities.at(selectedActivity!)
+      const selectedGroup = activityGroups.find((group) => group.id === selectedActivity?.id);
+
+      const activity = selectedGroup?.activities.at(selectedActivity?.index!)
       if (activity) {
         setFocusSelectedLocation(activity);
-        setSelectedActivity(20);
+        setSelectedActivity({id: "PAGE_ID", index:20});
       }
     }
     else if (focusHomebase) {
@@ -104,14 +105,13 @@ export default function Home() {
               <aside className="sidebar">
                 <ActivitySelector
                   activityGroups={activityGroups}
-                  selectedActivity={selectedActivity}
                   setActivityGroups={setActivityGroups}
                   addToDailyPlan={(activity) =>
                     addToDailyPlan(activity, "Day 1")
                   }
                   // Example for Day 1
-                  openGroup={openGroup}
-                  setOpenGroup={setOpenGroup}
+                  openGroup={openGroups}
+                  setOpenGroup={setOpenGroups}
                   setSelectedActivity={setSelectedActivity}
                 />
               </aside>
@@ -120,7 +120,7 @@ export default function Home() {
                 <GoogleMapComponent
                   selectedPlace={selectedPlace}
                   homebaseLocation={homebaseLocation}
-                  openGroup={openGroup}
+                  openGroup={openGroups}
                   activityGroups={activityGroups}
                   focusSelectedLocation={focusSelectedLocation}
                   setActivityGroups={setActivityGroups}
