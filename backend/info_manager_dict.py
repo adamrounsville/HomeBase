@@ -1,10 +1,12 @@
 import dataclasses
 import uuid
+from typing import Optional
 
 @dataclasses.dataclass
 class Place:
     name: str
     ID: str
+    daily_plan_id: Optional[str]
     latitude: float
     longitude: float
 
@@ -27,7 +29,7 @@ class InfoManagerDict:
         return self.data[user_id]
     
     def add_place(self, activity_group: str, user_id: str, name: str, id: str, latitude: float, longitude: float):
-        self.data[user_id].places[activity_group].append(Place(name, id, latitude, longitude))
+        self.data[user_id].places[activity_group].append(Place(name, id, None, latitude, longitude))
 
     def get_places(self, user_id: str):
         return [place for places in self.data[user_id].places.values() for place in places]
@@ -65,3 +67,23 @@ class InfoManagerDict:
             }
             for group_name, places in self.data[user_id].places.items()
         ]
+    
+    def get_daily_plan(self, user_id: str, daily_plan_id: str):
+        places = []
+        for place_list in self.data[user_id].places.values():
+            for place in place_list:
+                if place.daily_plan_id == daily_plan_id:
+                    places.append(place)
+        return places
+    
+    def add_to_daily_plan(self, user_id: str, daily_plan_id: str, place_id: str):
+        for place_list in self.data[user_id].places.values():
+            for place in place_list:
+                if place.ID == place_id:
+                    place.daily_plan_id = daily_plan_id
+
+    def remove_from_daily_plan(self, user_id: str, place_id: str):
+        for place_list in self.data[user_id].places.values():
+            for place in place_list:
+                if place.ID == place_id:
+                    place.daily_plan_id = None

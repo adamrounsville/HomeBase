@@ -72,7 +72,7 @@ def get_place(user_id: str, place_name: str):
     if not place:
         raise HTTPException(status_code=404, detail="Place not found for this user")
 
-    return { "place": place }
+    return { "place": Place(name=place.name, ID=place.ID, latitude=place.latitude, longitude=place.longitude) }
 
 @app.delete("/place")
 def delete_place(user_id: Annotated[str, Body()], activity_group: Annotated[str, Body()], place_id: Annotated[str, Body()]):
@@ -111,7 +111,15 @@ def get_activity_group(user_id: Annotated[str, Body()], activity_group: Annotate
     
     places = db.get_activity_group(user_id, activity_group)
 
-    return { "places" : places }
+    return { "places" : [
+        Place(
+            name=place.name,
+            ID=place.ID,
+            latitude=place.latitude,
+            longitude=place.longitude
+        )
+        for place in places
+    ] }
 
 @app.delete("/activity-group")
 def delete_activity_group(user_id: Annotated[str, Body()], activity_group: Annotated[str, Body()]):
@@ -128,8 +136,8 @@ def delete_activity_group(user_id: Annotated[str, Body()], activity_group: Annot
 @app.post("/homebase")
 def set_homebase(address: Annotated[str, Body()]):
     """
-    Takes in a address from the frontend, sets the information for use in the backend, and 
-    returns the UUID associated with the user.
+    Takes in a address from the frontend, sets the information for use in the backend, and returns the UUID associated with 
+    the user.
     """
     geocode_result = gmaps.geocode(address)
 
@@ -141,12 +149,16 @@ def set_homebase(address: Annotated[str, Body()]):
     return { "uuid": uuid }
 
 @app.get("/route")
-def get_route():
+def get_route(user_id: Annotated[str, Body()], daily_plan_id: Annotated[str, Body()]):
     """
-    Takes in a list of latitiudes and longitudes from the frontend, returns a Route made with information 
-    from Google API (format pending)
+    Takes in a daily plan ID from the frontend, returns a Route made from the cooresponding places using the Google Routes API
     """
-    pass
+
+    places = db.get_daily_plan(user_id, daily_plan_id)
+
+    #Google API Call
+
+    return { "message" : f"Loaded places for '{daily_plan_id}'."}
 
 @app.get("/users")
 def get_users():
@@ -181,3 +193,52 @@ def get_user_data():
         })
     
     return { "users": users }
+
+@app.put("/place/daily-plan")
+def add_place_to_daily_plan(user_id: Annotated[str, Body()], 
+                            place_id: Annotated[str, Body()], 
+                            daily_plan_id: Annotated[str, Body()]):
+    """
+    Takes in a user ID, place ID, and daily plan ID from the frontend, adds the place to the daily plan.
+    Subject to change.
+    """
+    if user_id not in db.data:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    db.add_to_daily_plan(user_id, daily_plan_id, place_id)
+
+    return { "message" : "success" }
+
+@app.delete("/place/daily-plan")
+def remove_place_from_daily_plan(user_id: Annotated[str, Body()], place_id: Annotated[str, Body()]):
+    """
+    Takes in a user ID, and place ID from the frontend, removes the place from it's the daily plan.
+    Subject to change.
+    """
+    if user_id not in db.data:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    db.remove_from_daily_plan(user_id, place_id)
+
+    return { "message" : "success" }
+
+@app.get("/daily-plan")
+def get_daily_plan(user_id: Annotated[str, Body()], daily_plan_id: Annotated[str, Body()]):
+    """
+    Takes in a user ID and an daily plan ID from the frontend, returns the daily plan from the user's places.
+    Subject to change.
+    """
+    if user_id not in db.data:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    places = db.get_daily_plan(user_id, daily_plan_id)
+
+    return { "places" : [
+        Place(
+            name=place.name,
+            ID=place.ID,
+            latitude=place.latitude,
+            longitude=place.longitude
+        )
+        for place in places
+    ] }
