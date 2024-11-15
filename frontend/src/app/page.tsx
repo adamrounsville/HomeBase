@@ -137,15 +137,20 @@ export default function Home() {
                     />
                   </div>
                   <div className=" schedule-optimization flex-2">
-                    <h2 className="text-white text-xl font-semibold mb-2">Optimize</h2>
                     <RouteOptimization/>
                   </div>
               </section>
             </div>
+            
           </main>
-          <footer className={styles.footer}></footer>
         </div>
       </APIProvider>
+      <footer className="w-full bg-black text-white text-center py-1">
+              <p className="text-sm">
+                Homebase &copy; 2024
+              </p>
+            </footer>
     </div>
+    
   );
 }
