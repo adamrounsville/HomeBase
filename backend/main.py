@@ -209,14 +209,16 @@ def add_place_to_daily_plan(user_id: Annotated[str, Body()],
     return { "message" : "success" }
 
 @app.delete("/place/daily-plan")
-def remove_place_from_daily_plan(user_id: Annotated[str, Body()], place_id: Annotated[str, Body()]):
+def remove_place_from_daily_plan(user_id: Annotated[str, Body()], 
+                                 place_id: Annotated[str, Body()],
+                                 daily_plan_id: Annotated[str, Body()]):
     """
     Takes in a user ID, and place ID from the frontend, removes the place from it's the daily plan.
     """
     if user_id not in db.data:
         raise HTTPException(status_code=404, detail="User not found")
     
-    db.remove_from_daily_plan(user_id, place_id)
+    db.remove_from_daily_plan(user_id, daily_plan_id, place_id)
 
     return { "message" : "success" }
 
