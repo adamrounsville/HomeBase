@@ -1,12 +1,10 @@
 import dataclasses
 import uuid
-from typing import Optional
 
 @dataclasses.dataclass
 class Place:
     name: str
     ID: str
-    daily_plan_id: Optional[str]
     latitude: float
     longitude: float
 
@@ -14,6 +12,7 @@ class Place:
 class UserInfo:
     home: tuple[float, float]
     places: dict[str, list[Place]]
+    daily_plans: dict[str, list[Place]]
 
 class InfoManagerDict:
     def __init__(self):
@@ -21,7 +20,7 @@ class InfoManagerDict:
 
     def add_user(self, latitude: float, longitude: float):
         user_id = str(uuid.uuid4())
-        info = UserInfo(home=(latitude, longitude), places=dict())
+        info = UserInfo(home=(latitude, longitude), places=dict(), daily_plans=dict())
         self.data[user_id] = info
         return user_id
 
@@ -29,7 +28,7 @@ class InfoManagerDict:
         return self.data[user_id]
     
     def add_place(self, activity_group: str, user_id: str, name: str, id: str, latitude: float, longitude: float):
-        self.data[user_id].places[activity_group].append(Place(name, id, None, latitude, longitude))
+        self.data[user_id].places[activity_group].append(Place(name, id, latitude, longitude))
 
     def get_places(self, user_id: str):
         return [place for places in self.data[user_id].places.values() for place in places]
@@ -69,21 +68,25 @@ class InfoManagerDict:
         ]
     
     def get_daily_plan(self, user_id: str, daily_plan_id: str):
-        places = []
-        for place_list in self.data[user_id].places.values():
-            for place in place_list:
-                if place.daily_plan_id == daily_plan_id:
-                    places.append(place)
-        return places
+        return self.data[user_id].daily_plans[daily_plan_id]
     
     def add_to_daily_plan(self, user_id: str, daily_plan_id: str, place_id: str):
         for place_list in self.data[user_id].places.values():
             for place in place_list:
                 if place.ID == place_id:
-                    place.daily_plan_id = daily_plan_id
+                    self.data[user_id].daily_plans[daily_plan_id].append(place)
 
-    def remove_from_daily_plan(self, user_id: str, place_id: str):
-        for place_list in self.data[user_id].places.values():
-            for place in place_list:
-                if place.ID == place_id:
-                    place.daily_plan_id = None
+    def remove_from_daily_plan(self, user_id: str, daily_plan_id: str, place_id: str):
+        if user_id in self.data and daily_plan_id in self.data[user_id].daily_plans:
+            self.data[user_id].daily_plans[daily_plan_id] = [
+                place for place in self.data[user_id].daily_plans[daily_plan_id] if place.ID != place_id
+            ]
+
+    def delete_daily_plan(self, user_id: str, daily_plan_id: str):
+        del self.data[user_id].daily_plans[daily_plan_id]
+
+    def create_daily_plan(self, user_id: str, daily_plan_id: str):
+        self.data[user_id].daily_plans[daily_plan_id] = []
+
+    def get_daily_plan_list(self, user_id: str):
+        return list(self.data[user_id].daily_plans.keys())

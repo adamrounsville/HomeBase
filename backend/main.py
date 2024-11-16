@@ -200,7 +200,6 @@ def add_place_to_daily_plan(user_id: Annotated[str, Body()],
                             daily_plan_id: Annotated[str, Body()]):
     """
     Takes in a user ID, place ID, and daily plan ID from the frontend, adds the place to the daily plan.
-    Subject to change.
     """
     if user_id not in db.data:
         raise HTTPException(status_code=404, detail="User not found")
@@ -213,7 +212,6 @@ def add_place_to_daily_plan(user_id: Annotated[str, Body()],
 def remove_place_from_daily_plan(user_id: Annotated[str, Body()], place_id: Annotated[str, Body()]):
     """
     Takes in a user ID, and place ID from the frontend, removes the place from it's the daily plan.
-    Subject to change.
     """
     if user_id not in db.data:
         raise HTTPException(status_code=404, detail="User not found")
@@ -226,7 +224,6 @@ def remove_place_from_daily_plan(user_id: Annotated[str, Body()], place_id: Anno
 def get_daily_plan(user_id: Annotated[str, Body()], daily_plan_id: Annotated[str, Body()]):
     """
     Takes in a user ID and an daily plan ID from the frontend, returns the daily plan from the user's places.
-    Subject to change.
     """
     if user_id not in db.data:
         raise HTTPException(status_code=404, detail="User not found")
@@ -242,3 +239,39 @@ def get_daily_plan(user_id: Annotated[str, Body()], daily_plan_id: Annotated[str
         )
         for place in places
     ] }
+
+@app.get("/daily-plan/all")
+def get_all_daily_plan_ids(user_id: Annotated[str, Body()]):
+    """
+    Takes in a user id from the frontend, returns a list of all the daily plans the user has.
+    """
+    if user_id not in db.data:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    dp_list = db.get_daily_plan_list(user_id)
+
+    return { "daily_plans" : dp_list }
+
+@app.delete("/daily-plan")
+def delete_daily_plan(user_id: Annotated[str, Body()], daily_plan_id: Annotated[str, Body()]):
+    """
+    Takes in a user id and daily plan id front the frontend, deletes the associated daily plan
+    """
+    if user_id not in db.data:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    db.delete_daily_plan(user_id, daily_plan_id)
+
+    return { "message" : "success" }
+
+@app.post("/daily-plan")
+def add_daily_plan(user_id: Annotated[str, Body()], daily_plan_id: Annotated[str, Body()]):
+    """
+    Takes in a user id and daily plan id front the frontend, creates a daily plan with that id
+    """
+    if user_id not in db.data:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    db.create_daily_plan(user_id, daily_plan_id)
+
+    return { "message" : "success" }
