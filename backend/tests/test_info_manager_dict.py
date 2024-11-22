@@ -10,6 +10,7 @@ class TestInfoManagerDict(unittest.TestCase):
         self.assertIn(user_id, self.manager.data)
         self.assertEqual(self.manager.data[user_id].home, (40.7128, -74.0060))
         self.assertEqual(len(self.manager.data[user_id].places), 0)
+        self.assertEqual(len(self.manager.data[user_id].daily_plans), 0)
 
     def test_add_place(self):
         user_id = self.manager.add_user(40.7128, -74.0060)
@@ -82,6 +83,36 @@ class TestInfoManagerDict(unittest.TestCase):
         self.assertFalse(self.manager.activity_group_exists(user_id, "parks"))
         self.assertTrue(self.manager.activity_group_exists(user_id, "squares"))
 
+    def test_add_to_daily_plan(self):
+        user_id = self.manager.add_user(40.7128, -74.0060)
+        self.manager.add_activity_group(user_id, "parks")
+        self.manager.add_place("parks", user_id, "Central Park", "park1", 40.7829, -73.9654)
+        self.manager.create_daily_plan(user_id, "morning")
+
+        self.manager.add_to_daily_plan(user_id, "morning", "park1")
+        places_in_plan = self.manager.get_daily_plan(user_id, "morning")
+        
+        self.assertEqual(len(places_in_plan), 1)
+        self.assertEqual(places_in_plan[0].name, "Central Park")
+
+    def test_remove_from_daily_plan(self):
+        user_id = self.manager.add_user(40.7128, -74.0060)
+        self.manager.add_activity_group(user_id, "parks")
+        self.manager.add_place("parks", user_id, "Central Park", "park1", 40.7829, -73.9654)
+        self.manager.create_daily_plan(user_id, "morning")
+        self.manager.add_to_daily_plan(user_id, "morning", "park1")
+
+        self.manager.remove_from_daily_plan(user_id, "morning", "park1")
+        places_in_plan = self.manager.get_daily_plan(user_id, "morning")
+        
+        self.assertEqual(len(places_in_plan), 0)
+
+    def test_delete_daily_plan(self):
+        user_id = self.manager.add_user(40.7128, -74.0060)
+        self.manager.create_daily_plan(user_id, "morning")
+        self.manager.delete_daily_plan(user_id, "morning")
+
+        self.assertNotIn("morning", self.manager.data[user_id].daily_plans)
+
 if __name__ == '__main__':
     unittest.main()
-
