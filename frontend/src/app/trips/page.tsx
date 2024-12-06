@@ -1,11 +1,11 @@
 "use client"
 import { APIProvider } from "@vis.gl/react-google-maps";
-import NavBar from "../components/navbar";
+import NavBar from "../components/homebase/navbar";
 import styles from "../page.module.css"
-import TripSelector from "../components/tripSelector";
+import TripSelector from "../components/trips/tripSelector";
 import { useState } from "react";
 import { Place, Trip, Vacation } from "@/lib/utils";
-import TripGoogleMaps from "../components/tripGoogleMaps";
+import TripGoogleMaps from "../components/trips/tripGoogleMaps";
 
 export default function Trips() {
     const place1 = new Place(
