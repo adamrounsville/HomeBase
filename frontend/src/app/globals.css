@@ -1404,7 +1404,7 @@ a {
 
 /* Hover effect for links */
 .navbar li a:hover {
-  background-color: #555; /* Same as active background */
+  scale: 1.05; /* Same as active background */
 }
 
 /* Ensure links are inline and centered */

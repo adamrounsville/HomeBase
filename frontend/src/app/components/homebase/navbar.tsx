@@ -14,7 +14,7 @@ const NavBar = () => {
               <Link
                 href="/"
                 className={`px-3 py-1 rounded-md transition  ${
-                  pathname === "/" ? "text-black font-bold " : "hover:bg-indigo-300 scale-105"
+                  pathname === "/" ? "text-black font-bold " : "hover:scale-105"
                 }`}
               >
                 Home
@@ -24,7 +24,7 @@ const NavBar = () => {
               <Link
                 href="/trips"
                 className={`px-3 py-1 rounded-md transition ${
-                  pathname === "/trips" ? " text-black font-bold" : "hover:bg-indigo-300 scale-105"
+                  pathname === "/trips" ? " text-black font-bold" : "hover:scale-105"
                 }`}
               >
                 Trips
