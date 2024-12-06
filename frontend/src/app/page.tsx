@@ -146,10 +146,10 @@ export default function Home() {
         </div>
       </APIProvider>
       <footer className="w-full bg-black text-white text-center py-1">
-              <p className="text-sm">
-                Homebase &copy; 2024
-              </p>
-            </footer>
+        <p className="text-sm">
+          Homebase &copy; 2024
+        </p>
+      </footer>
     </div>
     
   );

@@ -1379,6 +1379,39 @@ a {
   align-items: center;
   transition: opacity 0.2s ease-in-out;
 }
+.navbar ul {
+  list-style: none;
+  display: flex; /* Flexbox to position items side by side */
+  gap: 1rem; /* Spacing between the links */
+  margin: 0;
+  padding: 0;
+}
+
+/* Navbar links styling */
+.navbar li a {
+  color: white; /* Default link color */
+  text-decoration: none; /* Remove underline */
+  padding: 0.5rem 1rem; /* Add some padding */
+  border-radius: 5px; /* Rounded corners */
+  transition: background-color 0.3s ease, color 0.3s ease; /* Smooth hover effect */
+}
+
+/* Active link style */
+.navbar li a.active-link {
+  background-color: #555; /* Highlighted background */
+  color: #00ff00; /* Active link text color */
+}
+
+/* Hover effect for links */
+.navbar li a:hover {
+  background-color: #555; /* Same as active background */
+}
+
+/* Ensure links are inline and centered */
+.navbar li {
+  display: flex;
+  align-items: center; /* Vertically center text */
+}
 
 .tip {
   position: absolute;
@@ -1475,7 +1508,6 @@ a {
 .user-icon {
   width: 43px;
   height: 43px;
-  background-color: #777;
   border-radius: 50%;
   display: flex;
   justify-content: center;
@@ -1560,6 +1592,39 @@ li {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.trip-map{
+  flex: 1;
+  height: 50%;
+  box-sizing: border-box; /* Ensure padding does not overflow */
+  background-color: #f0f0f0; /* Optional: Background color to visualize */
+  border-radius: 8px;
+}
+.trip-map-container{
+  grid-area: map;
+  background-color: rgba(59, 56, 56, 0.04);
+  border-radius: 8px;
+  overflow: hidden;
+  justify-content: center;
+  display: flex;
+  padding: 10px; /* Padding around the entire container */
+  box-sizing: border-box; /* Ensure padding is included in the height */
+
+}
+.trip-container {
+  display: grid;
+  grid-template-columns: 250px 1fr;
+  grid-template-rows: auto 1fr auto;
+  grid-template-areas:
+    "header header"
+    "sidebar trip-map-container"
+    "sidebar schedule";
+  height: 100vh;
+  gap: 25px;
+  padding: 5px;
+  /* background-color: #000401; */
+  background-color: rgba(0, 0, 0, 0);
 }
 
 /* Schedule section */
