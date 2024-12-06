@@ -1,3 +1,4 @@
+import { Title } from "@radix-ui/react-dialog";
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 
@@ -44,5 +45,28 @@ export class ActivityGroup {
   // Method to add a place to the activity group
   addActivity(place: Place): void {
       this.activities.push(place);
+  }
+}
+
+export class Vacation{
+  id: string;
+  title: string;
+  dates: Trip[]
+
+  constructor(id: string, title: string, dates: Trip[]){
+    this.id= id
+    this.title = title
+    this.dates = dates
+  }
+}
+export class Trip{
+  id: string;
+  date: string;
+  places: Place[]
+
+  constructor(id: string, date:string, places: Place[]){
+    this.id = id
+    this.date = date
+    this.places = places
   }
 }

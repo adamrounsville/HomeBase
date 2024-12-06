@@ -1,15 +1,15 @@
 "use client";
 import styles from "./page.module.css";
-import GoogleMapComponent from "./components/map";
-import SearchBar from "./components/search";
-import NavBar from "./components/navbar";
-import ActivitySelector from "./components/activitySelector";
-import Homebase from "./components/homebase";
+import GoogleMapComponent from "./components/homebase/map";
+import SearchBar from "./components/homebase/search";
+import NavBar from "./components/homebase/navbar";
+import ActivitySelector from "./components/homebase/activitySelector";
+import Homebase from "./components/homebase/homebase";
 import { useEffect, useRef, useState } from "react";
 import { APIProvider } from "@vis.gl/react-google-maps";
 import { ActivityGroup, Place } from "@/lib/utils";
-import DailyActivities from "./components/dailyActivities";
-import RouteOptimization from "./components/routeOptimization";
+import DailyActivities from "./components/homebase/dailyActivities";
+import RouteOptimization from "./components/homebase/routeOptimization";
 
 export default function Home() {
   const [homebaseLocation, setHomebaseLocation] = useState<Place | null>(null);
@@ -146,10 +146,10 @@ export default function Home() {
         </div>
       </APIProvider>
       <footer className="w-full bg-black text-white text-center py-1">
-              <p className="text-sm">
-                Homebase &copy; 2024
-              </p>
-            </footer>
+        <p className="text-sm">
+          Homebase &copy; 2024
+        </p>
+      </footer>
     </div>
     
   );

@@ -42,9 +42,6 @@ const ActivitySelector = ({ activityGroups, openGroup, addToDailyPlan, setActivi
   const [newActivityTitle, setNewActivityTitle] = useState("");
   const [color, setColor] = useState("#b32aa9");
 
-  // const toggleGroup = (id: string) => {
-  //   setOpenGroup((prevOpenGroup: string) => (prevOpenGroup === id ? null : id));
-  // };
   const toggleGroup = (id: string) => {
     setOpenGroup((prevOpenGroups: string[]) =>
       prevOpenGroups.includes(id)
