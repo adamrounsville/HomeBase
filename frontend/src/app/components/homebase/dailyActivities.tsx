@@ -19,33 +19,33 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
 
-type Day = "Day 1" | "Day 2" | "Day 3";
 
 interface DailyActivitiesProps {
   dailyPlans: Record<string, Place[]>;
   setDailyPlans: (plans: Record<string, Place[]>) => void;
   activityGroups: ActivityGroup[];
+  selectedDate: Date;
+  setSelectedDate: (date: Date) => void;
+  dates: Date[];
+  setDates: (dates: Date[]) => void;
+  today: Date
+
 }
 
 const DailyActivities = ({
   dailyPlans,
   setDailyPlans,
   activityGroups,
+  selectedDate,
+  setSelectedDate,
+  dates,
+  setDates, today
 }: DailyActivitiesProps) => {
-  const today = new Date();
+  
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [selectedDate, setSelectedDate] = useState<Date>(today);
-  const [dates, setDates] = useState<Date[]>([today]);
+  // const [selectedDate, setSelectedDate] = useState<Date>(today);
+  // const [dates, setDates] = useState<Date[]>([today]);
 
   // Add activity to the selected date's daily plan
   const addToDailyPlan = (activity: Place) => {

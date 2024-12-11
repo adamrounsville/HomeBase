@@ -10,31 +10,28 @@ import { APIProvider } from "@vis.gl/react-google-maps";
 import { ActivityGroup, Place } from "@/lib/utils";
 import DailyActivities from "./components/homebase/dailyActivities";
 import RouteOptimization from "./components/homebase/routeOptimization";
+import { format } from "date-fns";
 
 export default function Home() {
   const [homebaseLocation, setHomebaseLocation] = useState<Place | null>(null);
   const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
   const [activityGroups, setActivityGroups] = useState<ActivityGroup[]>([]);
 
-  const [dailyPlans, setDailyPlans] = useState<
-    Record<"Day 1" | "Day 2" | "Day 3", Place[]>
-  >({
-    "Day 1": [],
-    "Day 2": [],
-    "Day 3": [],
-  });
+  const today = new Date()
+  const [dates, setDates] = useState<Date[]>([today]);
+  const [selectedDate, setSelectedDate] = useState<Date>(today);
+  const [dailyPlans, setDailyPlans] = useState<Record<string, Place[]>>({});
 
-  const addToDailyPlan = (
-    activity: Place,
-    selectedDate: "Day 1" | "Day 2" | "Day 3"
-  ) => {
-    if (
-      !dailyPlans[selectedDate].some((a) => a.placeId === activity.placeId)
-    ) {
-      setDailyPlans((prevDailyPlans) => ({
-        ...prevDailyPlans,
-        [selectedDate]: [...prevDailyPlans[selectedDate], activity],
-      }));
+ 
+  const addToDailyPlan = (activity: Place) => {
+    if (selectedDate) {
+      const dateKey = format(selectedDate, "PPP");
+      if (!dailyPlans[dateKey]?.some((a) => a.placeId === activity.placeId)) {
+        setDailyPlans({
+          ...dailyPlans,
+          [dateKey]: [...(dailyPlans[dateKey] || []), activity],
+        });
+      }
     }
   };
 
@@ -107,7 +104,7 @@ export default function Home() {
                   activityGroups={activityGroups}
                   setActivityGroups={setActivityGroups}
                   addToDailyPlan={(activity) =>
-                    addToDailyPlan(activity, "Day 1")
+                    addToDailyPlan(activity)
                   }
                   // Example for Day 1
                   openGroup={openGroups}
@@ -134,6 +131,11 @@ export default function Home() {
                       dailyPlans={dailyPlans}
                       setDailyPlans={setDailyPlans}
                       activityGroups={activityGroups}
+                      dates={dates}
+                      setDates={setDates}
+                      selectedDate={selectedDate}
+                      setSelectedDate={setSelectedDate}
+                      today={today}
                     />
                   </div>
                   <div className=" schedule-optimization flex-2">
