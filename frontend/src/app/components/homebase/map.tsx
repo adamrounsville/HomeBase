@@ -89,9 +89,39 @@ const GoogleMapComponent = ({
     setModalOpen(true);
   };
 
-  const handleAddToGroup = () => {
+  const handleAddToGroup = async () => {
     // Find the group that we want to add to
     const group = activityGroups.find((g) => g.id === selectedActivityGroup);
+
+    const userId = localStorage.getItem('userId')
+    const placeId = selectedPlace?.placeId
+    
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/place`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          user_id: userId,
+          place_id: placeId,
+          activity_group: group?.id,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to add place");
+      }
+
+      const data = await response.json();
+      console.log("Place added successfully:", data);
+    
+    } catch (error: any) {
+      console.error("Error adding place:", error.message);
+
+    }
+
+      
     // Make a new Place Object and add it to the ActivityGroup
     if (group && selectedPlace) {
       group?.addActivity(selectedPlace);

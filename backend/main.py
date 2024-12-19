@@ -29,11 +29,13 @@ app = FastAPI()
 app.add_middleware(CORSMiddleware, **CORS_CONFIG)
 
 @app.post("/place")
-def add_place(user_id: Annotated[str, Body()], place_name: Annotated[str, Body()], activity_group: Annotated[str, Body()]):
+def add_place(user_id: Annotated[str, Body()], place_id: Annotated[str, Body()], activity_group: Annotated[str, Body()]):
     """
     Takes in a user ID, location name, and activity group from the frontend, adds a Place made with information from
     the Google Places API to the user's places, and returns the Place object.
     """
+    print("Inside Post")
+    print("UserID:", user_id)
     try:
         user = db.get_user(user_id)
     except KeyError:
@@ -41,23 +43,37 @@ def add_place(user_id: Annotated[str, Body()], place_name: Annotated[str, Body()
     
     if not db.activity_group_exists(user_id, activity_group):
         raise HTTPException(status_code=404, detail="Activity group not found")
-
+    
+    desired_fields = [
+            "name",
+            "place_id",
+            "geometry/location",  # Includes latitude and longitude
+            "formatted_address",
+            "geometry/viewport",
+        ]
+    
     # Bias results within 100km of the user's homebase
-    place_result = gmaps.places(place_name, user.home, radius=100000)
-    if not place_result['results']:
-        raise HTTPException(status_code=404, detail="Place not found")
+    place_result = gmaps.place(place_id=place_id,  fields=desired_fields)
+    print("Successfully got Place")
+    # , user.home, radius=100000
+    print("Place REsult:", place_result)
+    # if not place_result['results']:
+    #     raise HTTPException(status_code=404, detail="Place not found")
 
-    place_info = place_result['results'][0]
+    place_info = place_result['result']
 
     place_id = place_info['place_id']
     name = place_info['name']
     location = place_info['geometry']['location']
     latitude = location['lat']
     longitude = location['lng']
+    viewport  = place_info['geometry']['viewport']
+    address = place_info["formatted_address"]
 
-    db.add_place(activity_group, user_id, name, place_id, latitude, longitude)
-
-    return { "place": Place(name=name, ID=place_id, latitude=latitude, longitude=longitude) }
+    db.add_place(activity_group, user_id, name, address, place_id, latitude, longitude, viewport)
+    # return {"message": "Successfully Added Place"}
+    place = Place(name=name, ID=place_id, address = address,  latitude=latitude, longitude=longitude, viewport=viewport)
+    return { "place":place}
 
 @app.get("/place")
 def get_place(user_id: str, place_name: str):
@@ -204,8 +220,10 @@ def add_place_to_daily_plan(user_id: Annotated[str, Body()],
     """
     if user_id not in db.data:
         raise HTTPException(status_code=404, detail="User not found")
-    
+    print("daily_plan_id", daily_plan_id)
+    print("place_id", place_id)
     db.add_to_daily_plan(user_id, daily_plan_id, place_id)
+    print(db.data)
 
     return { "message" : "success" }
 
@@ -279,20 +297,28 @@ def add_daily_plan(user_id: Annotated[str, Body()], daily_plan_id: Annotated[str
 
     return { "message" : "success" }
 
+class OptimizeRoutesRequest(BaseModel):
+    user_id: str
+
 @app.post("/optimize-routes")
-async def optimize_routes(user_id: Annotated[str, Body()]):
+async def optimize_routes(request: OptimizeRoutesRequest):
     """
     Takes in a user ID and optimizes routes for all trips in their vacation plans
     using Google Maps Compute Routes API.
     """
     try:
+        print("Got in Optimze Routes")
+        user_id = request.user_id
         # Get all daily plans for the user
         daily_plans = db.get_daily_plan_list(user_id)
+
+        print("Got daily Plan:", daily_plans)
         
         optimized_routes = []
         
         for plan_id in daily_plans:
             places = db.get_daily_plan(user_id, plan_id)
+            print("Places:", places)
             
             if not places or len(places) < 2:
                 continue
@@ -345,15 +371,32 @@ async def optimize_routes(user_id: Annotated[str, Body()]):
             }
             
             response = requests.post(url, json=request_body, headers=headers)
-            
             if response.status_code == 200:
                 route_data = response.json()
                 optimized_routes.append({
                     "plan_id": plan_id,
                     "route_data": route_data
                 })
-            
+        print("Optimized Routes:", optimized_routes)
         return {"optimized_routes": optimized_routes}
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/users/{user_id}/daily-plans")
+def get_all_daily_plans(user_id: str):
+    """
+    Retrieve all daily plans for a specific user.
+    """
+    try:
+        user_data = db.get_user(user_id)
+        daily_plans = [
+            {
+                "daily_plan_id": plan_id,
+                "places": plan_places,
+            }
+            for plan_id, plan_places in user_data.daily_plans.items()
+        ]
+        return {"daily_plans": daily_plans}
+    except KeyError:
+        raise HTTPException(status_code=404, detail="User not found")

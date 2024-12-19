@@ -7,25 +7,30 @@ import usePlacesService from "./placesServiceHook";
 const RouteOptimization = () => {
   const router = useRouter(); // Get the router object
 
-  const handleButtonClick = () => {
-    // const placesService = usePlacesService()
-    // const placeId = "ChIJRYWgDQiaTYcRBWbJnKsNrpE"
-    // const request: google.maps.places.PlaceDetailsRequest = {
-    //     placeId,
-    //     fields: ["name", "formatted_address", "geometry", "rating", "photos"],
-    // };
-    // if(placesService){
-    //     placesService.getDetails(request, (result, status) => {
-    //         if (status === google.maps.places.PlacesServiceStatus.OK && result) {
-    //         //   setPlaceDetails(result);
-    //         console.log("Place details fetched:", result);
-    //         } else {
-    //         console.error("Error fetching place details:", status);
-    //         }
-    //     }
-    
-    // )};
-    router.push("/trips"); // Navigate to the trips page
+  const handleButtonClick = async () => {
+    const userId = localStorage.getItem('userId')
+    console.log("UserId:", userId)
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/optimize-routes`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          user_id: userId,
+        }),
+      });
+      if (!response.ok) {
+        throw new Error(`Failed to optimize routes: ${response.status} (${response.statusText})`);
+      }
+  
+      const data = await response.json();
+      console.log("Optimization successful:", data);
+    } catch (error: any) {
+      console.error("Error optimizing routes:", error.message);
+    }
+  
+    // router.push("/trips"); // Navigate to the trips page
   };
   
   return (

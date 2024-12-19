@@ -23,7 +23,7 @@ export default function Home() {
   const [dailyPlans, setDailyPlans] = useState<Record<string, Place[]>>({});
 
  
-  const addToDailyPlan = (activity: Place) => {
+  const addToDailyPlan = async (activity: Place) => {
     if (selectedDate) {
       const dateKey = format(selectedDate, "PPP");
       if (!dailyPlans[dateKey]?.some((a) => a.placeId === activity.placeId)) {
@@ -31,6 +31,23 @@ export default function Home() {
           ...dailyPlans,
           [dateKey]: [...(dailyPlans[dateKey] || []), activity],
         });
+        const userId = localStorage.getItem('userId')
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/place/daily-plan`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            user_id: userId,
+            place_id: activity.placeId,
+            daily_plan_id: dateKey,
+          }),
+        });
+      
+        if (!response.ok) {
+          throw new Error("Failed to add place to daily plan");
+        }
+        console.log(response.json());
       }
     }
   };

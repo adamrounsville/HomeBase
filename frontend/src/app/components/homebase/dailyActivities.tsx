@@ -48,7 +48,7 @@ const DailyActivities = ({
   // const [dates, setDates] = useState<Date[]>([today]);
 
   // Add activity to the selected date's daily plan
-  const addToDailyPlan = (activity: Place) => {
+  const addToDailyPlan = async (activity: Place) => {
     if (selectedDate) {
       const dateKey = format(selectedDate, "PPP");
       if (!dailyPlans[dateKey]?.some((a) => a.placeId === activity.placeId)) {
@@ -57,6 +57,24 @@ const DailyActivities = ({
           [dateKey]: [...(dailyPlans[dateKey] || []), activity],
         });
       }
+      const userId = localStorage.getItem('userId')
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/place/daily-plan`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          user_id: userId,
+          place_id: activity.placeId,
+          daily_plan_id: dateKey,
+        }),
+      });
+    
+      if (!response.ok) {
+        throw new Error("Failed to add place to daily plan");
+      }
+      console.log(response.json());
+      
       setIsDialogOpen(false); // Close dialog after adding
     }
   };
@@ -71,7 +89,31 @@ const DailyActivities = ({
   };
 
   // Remove activity from a specific day's plan
-  const removeFromDailyPlan = (dateKey: string, activityId: string) => {
+  const removeFromDailyPlan = async ( dateKey: string, activityId: string) => {
+    const userId = localStorage.getItem('userId')
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/place/daily-plan`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          user_id: userId,
+          place_id: activityId,
+          daily_plan_id: dateKey,
+        }),
+      });
+  
+      if (!response.ok) {
+        throw new Error("Failed to remove place from daily plan");
+      }
+  
+      const data = await response.json();
+      console.log("Response:", data.message);
+    } catch (error: any) {
+      console.error("Error removing place from daily plan:", error.message);
+    }
+
     setDailyPlans({
       ...dailyPlans,
       [dateKey]: dailyPlans[dateKey].filter((a) => a.placeId !== activityId),

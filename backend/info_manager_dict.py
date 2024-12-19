@@ -4,9 +4,16 @@ import uuid
 @dataclasses.dataclass
 class Place:
     name: str
+    address: str
     ID: str
     latitude: float
     longitude: float
+    viewport: any
+
+class AddPlaceRequest():
+    user_id: str
+    place: Place  # This will hold the place object from the frontend
+    activity_group: str
 
 @dataclasses.dataclass
 class UserInfo:
@@ -27,8 +34,8 @@ class InfoManagerDict:
     def get_user(self, user_id: str):
         return self.data[user_id]
     
-    def add_place(self, activity_group: str, user_id: str, name: str, id: str, latitude: float, longitude: float):
-        self.data[user_id].places[activity_group].append(Place(name, id, latitude, longitude))
+    def add_place(self, activity_group: str, user_id: str, name: str, address:str, place_id: str, latitude: float, longitude: float, viewport):
+        self.data[user_id].places[activity_group].append(Place(name, address, place_id, latitude, longitude, viewport))
 
     def get_places(self, user_id: str):
         return [place for places in self.data[user_id].places.values() for place in places]
@@ -72,9 +79,16 @@ class InfoManagerDict:
     
     def add_to_daily_plan(self, user_id: str, daily_plan_id: str, place_id: str):
         for place_list in self.data[user_id].places.values():
+            print("place list:", place_list)
             for place in place_list:
+                print("place:", place)
                 if place.ID == place_id:
+                    print("got in place")
+                    if daily_plan_id not in self.data[user_id].daily_plans:
+                        self.data[user_id].daily_plans[daily_plan_id] = []
                     self.data[user_id].daily_plans[daily_plan_id].append(place)
+                    print("Adding to daily plan")
+                    print(self.data[user_id].daily_plans[daily_plan_id])
 
     def remove_from_daily_plan(self, user_id: str, daily_plan_id: str, place_id: str):
         if user_id in self.data and daily_plan_id in self.data[user_id].daily_plans:
